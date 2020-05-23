@@ -7,7 +7,6 @@ install:
   - pip install pipenv
   - pipenv install --dev
 
-# commands to check code quality and run tests
+# commands to run tests
 script:
-  - pylint ds_utils --ignore-patterns="test_.*?py" --max-line-length=120
   - pytest
