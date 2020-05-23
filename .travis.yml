@@ -9,5 +9,5 @@ install:
 
 # commands to check code quality and run tests
 script:
-#  - pylint ds_utils --ignore-patterns="test_.*?py" --max-line-length=120
+  - pylint ds_utils --ignore-patterns="test_.*?py" --max-line-length=120
   - pytest
