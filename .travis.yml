@@ -5,7 +5,7 @@ python:
 # command to install dependencies
 install:
   - pip install pipenv
-  - PIPENV_IGNORE_VIRTUALENVS=1 pipenv install --dev
+  - pipenv install --dev
 
 # commands to check code quality and run tests
 script:
