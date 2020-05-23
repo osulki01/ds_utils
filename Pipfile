@@ -5,6 +5,7 @@ verify_ssl = true
 
 [dev-packages]
 coverage = "*"
+pylint = "*"
 pyfakefs = "*"
 pytest = "*"
 
@@ -15,3 +16,7 @@ statsmodels = "*"
 
 [requires]
 python_version = "3.7"
+
+[scripts]
+lint = 'pylint ds_utils --ignore-patterns="test_.*?py" --max-line-length=120'
+test = 'pytest'

@@ -1,21 +1,31 @@
-from ds_utils.sklearn_utils import sk_io
+"""
+Testing for saving and loading sklearn objects.
+"""
+
+# Standard library imports
 import os
 from os import path
 import pickle
 from pyfakefs.pytest_plugin import fs
 import pytest
+
+# Third party imports
 import sklearn
 from sklearn import preprocessing
+
+# Local application imports
+from ds_utils.sklearn_utils import sk_io
 
 
 @pytest.fixture
 def sklearn_current_version():
+    """Get current version of sklearn."""
     return sklearn.__version__
 
 
 @pytest.fixture
 def sklearn_scaler_object():
-    # Create sklearn object that will be saved and loaded
+    """Create sklearn object that will be saved and loaded."""
     return preprocessing.StandardScaler()
 
 
@@ -37,9 +47,11 @@ def test_load_pickled_sklearn_object_and_version(fs, sklearn_scaler_object, skle
         filename_or_path=file_path
     )
 
-    assert type(loaded_sklearn_object) == type(sklearn_scaler_object)
+    assert isinstance(loaded_sklearn_object, type(sklearn_scaler_object))
 
     assert loaded_sklearn_version == sklearn_current_version
+
+
 
 
 def test_save_pickled_sklearn_object_and_version_handles_existing_directory(fs, sklearn_scaler_object):
@@ -105,7 +117,7 @@ def test_save_pickled_sklearn_object_and_version_handles_existing_file(fs, sklea
     assert overwritten_file_last_modified_time > existing_file_last_modified_time
 
 
-def test__warn_if_loaded_sklearn_object_version_different_to_current_version(sklearn_current_version):
+def test__warn_if_loaded_sklearn_object_version_different_to_current_version():
     """
     User is made aware if the version associated with the loaded sklearn object is different to the version of sklearn
     they are using, or that the version was not originally saved correctly.

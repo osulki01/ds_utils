@@ -1,9 +1,16 @@
+"""
+Saving and loading sklearn objects.
+"""
+
+# Standard library imports
 import os
 from os import path
 import pickle
-import sklearn
 from typing import Tuple
 import warnings
+
+# Third party imports
+import sklearn
 
 
 def load_pickled_sklearn_object_and_version(filename_or_path: str) -> Tuple:
@@ -71,15 +78,14 @@ def save_pickled_sklearn_object_and_version(
         raise FileExistsError(f'File {filename_or_path} already exists. \nTo overwrite an existing file, '
                               f'set overwrite=True when calling this method.')
 
-    else:
-        sklearn_object_and_version = (sklearn_object, sklearn.__version__)
+    sklearn_object_and_version = (sklearn_object, sklearn.__version__)
 
-        # If the directory does not already exist, then create it
-        os.makedirs(path.dirname(filename_or_path), exist_ok=True)
+    # If the directory does not already exist, then create it
+    os.makedirs(path.dirname(filename_or_path), exist_ok=True)
 
-        # Save both the sklearn object and version of sklearn
-        with open(filename_or_path, 'wb') as target_destination:
-            pickle.dump(sklearn_object_and_version, target_destination)
+    # Save both the sklearn object and version of sklearn
+    with open(filename_or_path, 'wb') as target_destination:
+        pickle.dump(sklearn_object_and_version, target_destination)
 
 
 def _warn_if_loaded_sklearn_object_version_different_to_current_version(
@@ -96,6 +102,12 @@ def _warn_if_loaded_sklearn_object_version_different_to_current_version(
         Version of sklearn associated with the loaded object.
     filename_or_path : str
         Location where the sklearn object and its version is saved.
+
+    Raises
+    ----------
+    UserWarning
+        If the sklearn version associated with the loaded object is different to the current version of sklearn being
+        used.
     """
 
     sklearn_current_version = sklearn.__version__
