@@ -1,0 +1,148 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>sklearn_utils &#8212; ds_utils 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Welcome to ds_utils’s documentation!" href="../index.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../index.html" title="Welcome to ds_utils’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">ds_utils 0.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="sklearn-utils">
+<h1>sklearn_utils<a class="headerlink" href="#sklearn-utils" title="Permalink to this headline">¶</a></h1>
+<p>Helper functions when working with scikit-learn.</p>
+<div class="section" id="module-ds_utils.sklearn_utils.sk_io">
+<span id="sk-io"></span><h2>sk_io<a class="headerlink" href="#module-ds_utils.sklearn_utils.sk_io" title="Permalink to this headline">¶</a></h2>
+<p>Saving and loading sklearn objects.</p>
+<dl class="py function">
+<dt id="ds_utils.sklearn_utils.sk_io.load_pickled_sklearn_object_and_version">
+<code class="sig-prename descclassname">ds_utils.sklearn_utils.sk_io.</code><code class="sig-name descname">load_pickled_sklearn_object_and_version</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename_or_path</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; Tuple<a class="headerlink" href="#ds_utils.sklearn_utils.sk_io.load_pickled_sklearn_object_and_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a pickled sklearn object and the sklearn version associated with when the sklearn object was saved.</p>
+<dl class="simple">
+<dt>filename_or_path<span class="classifier">str</span></dt><dd><p>Location where the sklearn object and its version is saved.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Tuple[sklearn_object, str]</dt><dd><p>sklearn_object: sklearn object.
+str: Version of sklearn when the object was saved.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>UserWarning</dt><dd><p>If the sklearn version associated with the loaded object is different to the current version of sklearn being
+used.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="ds_utils.sklearn_utils.sk_io.save_pickled_sklearn_object_and_version">
+<code class="sig-prename descclassname">ds_utils.sklearn_utils.sk_io.</code><code class="sig-name descname">save_pickled_sklearn_object_and_version</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sklearn_object</span></em>, <em class="sig-param"><span class="n">filename_or_path</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">overwrite</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#ds_utils.sklearn_utils.sk_io.save_pickled_sklearn_object_and_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves sklearn object as a pickle file, along with the running version of the sklearn library.</p>
+<p>Should only be used to save an sklearn object you have trained/created yourself, not an already-pickled object that
+you have loaded, as it will save the sklearn version that you are currently running rather than the one used to
+originally create the sklearn object.</p>
+<dl class="simple">
+<dt>sklearn_object<span class="classifier">sklearn object</span></dt><dd><p>Model/sklearn-object to be saved.</p>
+</dd>
+<dt>filename_or_path<span class="classifier">str</span></dt><dd><p>Target where the object and its version will be saved.</p>
+</dd>
+<dt>overwrite<span class="classifier">bool (default is False)</span></dt><dd><p>Whether to overwrite file if it already exists.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>FileExistsError</dt><dd><p>If a <cite>filename_or_path</cite> already exists and user did not set <cite>overwrite</cite> mode.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">sklearn_utils</a><ul>
+<li><a class="reference internal" href="#module-ds_utils.sklearn_utils.sk_io">sk_io</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../index.html"
+                        title="previous chapter">Welcome to ds_utils’s documentation!</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/ds_utils/sklearn_utils.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../index.html" title="Welcome to ds_utils’s documentation!"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">ds_utils 0.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Kieran O&#39;Sullivan.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+    </div>
+  </body>
+</html>
