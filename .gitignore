@@ -91,3 +91,8 @@ coverage.xml
 
 # User-specific stuff
 .idea/
+
+
+### Sphinx documentation ###
+
+/sphinx/_build

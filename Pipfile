@@ -8,6 +8,7 @@ coverage = "*"
 pylint = "*"
 pyfakefs = "*"
 pytest = "*"
+sphinx = "*"
 
 [packages]
 pandas = "*"
@@ -18,5 +19,6 @@ statsmodels = "*"
 python_version = "3.7"
 
 [scripts]
-lint = 'pylint ds_utils --ignore-patterns="test_.*?py" --max-line-length=120'
+lint_all = 'pylint ds_utils --ignore-patterns="test_.*?py" --max-line-length=120'
+lint = 'pylint --max-line-length=120'
 test = 'pytest'
