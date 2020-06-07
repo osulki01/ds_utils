@@ -72,7 +72,7 @@ def global_variables_for_calculate_required_sample_size():
 def test_calculate_required_sample_size_mean(global_variables_for_calculate_required_sample_size):
     """
     Sample size should be calculated appropriately using the statsmodels package when measuring a mean value in the
-    experiment (using z-testing as we know the standard deviation).
+    experiment (using a t-test).
     """
 
     effect_size = set_up_experiment._calculate_effect_size_means(
@@ -104,7 +104,7 @@ def test_calculate_required_sample_size_mean(global_variables_for_calculate_requ
 def test_calculate_required_sample_size_proportion(global_variables_for_calculate_required_sample_size):
     """
     Sample size should be calculated appropriately using the statsmodels package when measuring a proportion value in
-    the experiment (using t-testing).
+    the experiment (using a z-test).
     """
 
     effect_size = set_up_experiment._calculate_effect_size_proportions(
