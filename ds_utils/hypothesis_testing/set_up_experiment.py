@@ -79,24 +79,25 @@ def calculate_required_sample_size(
         baseline_metric_value: float,
         new_metric_value: float,
         measurement_type: str,
+        *,
         alternative_hypothesis: str = 'two-sided',
         power: float = 0.8,
         significance_level: float = 0.05,
         standard_deviation: float = None,
 ) -> int:
     """
-    Calculate the required sample size for an experiment given a certain shift we are trying to predict.
+    Calculate the required sample size for an experiment given a certain degree of change that we want to confidently
+    detect.
 
     Parameters
     ----------
     baseline_metric_value : float
-        Baseline value that reflects the current metric we are trying to change e.g. the existing
-        retention rate.
+        Baseline value that reflects the current metric we are trying to change e.g. the existing retention rate.
     new_metric_value : float
         The smallest meaningful effect that we wish to be able to detect i.e. at what point do the results become
         commercially interesting e.g. 85% retention vs 80% baseline may be the smallest shift which yield a financial
         benefit that makes the project worth implementing.
-    measurement_type : str
+    measurement_type : str (must be 'proportion' or 'mean')
         Whether the metric is a proportion (e.g. % conversion rate) or mean (e.g. average spend).
     alternative_hypothesis : str (default is 'two-sided')
         Whether you are running a 'two-sided' test, or checking whether the new metric will be 'smaller' or 'larger'.
@@ -131,16 +132,13 @@ def calculate_required_sample_size(
     if measurement_type == 'mean' and standard_deviation is None:
         raise TypeError("When measuring a mean for your test, you must also specify its existing `standard_deviation`.")
 
-    if measurement_type not in ('proportion', 'mean'):
-        raise ValueError('measurement_type must be "proportion" or "mean".')
-
     if not 0 < significance_level < 1:
         raise ValueError("significance_level must be greater than 0 but less than 1.")
 
     if not 0 < power < 1:
         raise ValueError("power must be greater than 0 but less than 1.")
 
-    # Calculate sample size required if measuring difference between two proportions
+    # Calculate sample size required if measuring difference between two proportions and will therefore use a z-test
     if measurement_type == 'proportion':
 
         # How big is the shift we want to capture
@@ -157,7 +155,7 @@ def calculate_required_sample_size(
             alternative=alternative_hypothesis,
         )
 
-    # Calculate sample size required if measuring difference between two means
+    # Calculate sample size required if measuring difference between two means and will therefore use a t-test
     elif measurement_type == 'mean':
 
         # How big is the shift we want to capture
@@ -174,5 +172,8 @@ def calculate_required_sample_size(
             power=power,
             alternative=alternative_hypothesis,
         )
+
+    else:
+        raise ValueError('measurement_type must be "proportion" or "mean".')
 
     return int(required_sample_size)
