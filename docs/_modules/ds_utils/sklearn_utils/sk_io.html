@@ -1,0 +1,209 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>ds_utils.sklearn_utils.sk_io &#8212; ds_utils 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">ds_utils 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for ds_utils.sklearn_utils.sk_io</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Saving and loading sklearn objects.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># Standard library imports</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">path</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="c1"># Third party imports</span>
+<span class="kn">import</span> <span class="nn">sklearn</span>
+
+
+<div class="viewcode-block" id="load_pickled_sklearn_object_and_version"><a class="viewcode-back" href="../../../modules/sklearn_utils.html#ds_utils.sklearn_utils.sk_io.load_pickled_sklearn_object_and_version">[docs]</a><span class="k">def</span> <span class="nf">load_pickled_sklearn_object_and_version</span><span class="p">(</span><span class="n">filename_or_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load a pickled sklearn object and the sklearn version associated with when the sklearn object was saved.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    filename_or_path : str</span>
+<span class="sd">        Location where the sklearn object and its version is saved.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Tuple[sklearn_object, str]</span>
+<span class="sd">        sklearn_object: sklearn object.</span>
+<span class="sd">        str: Version of sklearn when the object was saved.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ----------</span>
+<span class="sd">    UserWarning</span>
+<span class="sd">        If the sklearn version associated with the loaded object is different to the current version of sklearn being</span>
+<span class="sd">        used.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename_or_path</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file_to_load</span><span class="p">:</span>
+        <span class="n">sklearn_object</span><span class="p">,</span> <span class="n">sklearn_version</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file_to_load</span><span class="p">)</span>
+
+    <span class="n">_warn_if_loaded_sklearn_object_version_different_to_current_version</span><span class="p">(</span>
+        <span class="n">loaded_sklearn_object_version</span><span class="o">=</span><span class="n">sklearn_version</span><span class="p">,</span>
+        <span class="n">filename_or_path</span><span class="o">=</span><span class="n">filename_or_path</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">sklearn_object</span><span class="p">,</span> <span class="n">sklearn_version</span></div>
+
+
+<div class="viewcode-block" id="save_pickled_sklearn_object_and_version"><a class="viewcode-back" href="../../../modules/sklearn_utils.html#ds_utils.sklearn_utils.sk_io.save_pickled_sklearn_object_and_version">[docs]</a><span class="k">def</span> <span class="nf">save_pickled_sklearn_object_and_version</span><span class="p">(</span>
+        <span class="n">sklearn_object</span><span class="p">,</span>
+        <span class="n">filename_or_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Saves sklearn object as a pickle file, along with the version of the sklearn library that is currently being used.</span>
+
+<span class="sd">    Only use when saving an sklearn object you have trained/created yourself, not an already-pickled object that you</span>
+<span class="sd">    have loaded from elsewhere, as you do not know whether your version of sklearn is the same as the one used to</span>
+<span class="sd">    originally create it.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    sklearn_object : sklearn object</span>
+<span class="sd">        Model/sklearn-object to be saved.</span>
+<span class="sd">    filename_or_path : str</span>
+<span class="sd">        Target where the object and its version will be saved.</span>
+<span class="sd">    overwrite : bool (default is False)</span>
+<span class="sd">        Whether to overwrite file if it already exists.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ----------</span>
+<span class="sd">    FileExistsError</span>
+<span class="sd">        If the `filename_or_path` already exists and user did not set `overwrite` mode.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Exit if file already exists and user did not choose to overwrite</span>
+    <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filename_or_path</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">overwrite</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">FileExistsError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;File </span><span class="si">{</span><span class="n">filename_or_path</span><span class="si">}</span><span class="s1"> already exists. </span><span class="se">\n</span><span class="s1">To overwrite an existing file, &#39;</span>
+                              <span class="sa">f</span><span class="s1">&#39;set overwrite=True when calling this method.&#39;</span><span class="p">)</span>
+
+    <span class="n">sklearn_object_and_version</span> <span class="o">=</span> <span class="p">(</span><span class="n">sklearn_object</span><span class="p">,</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span>
+
+    <span class="c1"># If a full filepath has been provided, and the directory does not already exist, then create it</span>
+    <span class="n">directory</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">filename_or_path</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">directory</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Save both the sklearn object and version of sklearn</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename_or_path</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">target_destination</span><span class="p">:</span>
+        <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">sklearn_object_and_version</span><span class="p">,</span> <span class="n">target_destination</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_warn_if_loaded_sklearn_object_version_different_to_current_version</span><span class="p">(</span>
+        <span class="n">loaded_sklearn_object_version</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">filename_or_path</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Throw a warning if the version associated with an sklearn object that has been loaded is different to the current</span>
+<span class="sd">    version running.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    loaded_sklearn_object_version : str</span>
+<span class="sd">        Version of sklearn associated with the loaded object.</span>
+<span class="sd">    filename_or_path : str</span>
+<span class="sd">        Location where the sklearn object and its version is saved.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ----------</span>
+<span class="sd">    UserWarning</span>
+<span class="sd">        If the sklearn version associated with the loaded object is different to the current version of sklearn being</span>
+<span class="sd">        used.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">sklearn_current_version</span> <span class="o">=</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">__version__</span>
+
+    <span class="c1"># Raise exception if the sklearn version was not saved correctly and is not a string</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">loaded_sklearn_object_version</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Version of sklearn associated with loaded object is not a string. </span><span class="se">\n</span><span class="s2">Check that the pickled &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;file being loaded was saved in the correct format and order: Tuple[sklearn_object, &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;str]. </span><span class="se">\n</span><span class="s2">File to be checked: </span><span class="si">{</span><span class="n">filename_or_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Warn user if the version associated with the loaded sklearn object is different to the current sklearn version</span>
+    <span class="k">if</span> <span class="n">loaded_sklearn_object_version</span> <span class="o">!=</span> <span class="n">sklearn_current_version</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">The version of sklearn used when saving the original sklearn object is different to your current version.</span>
+<span class="s2">Version associated with the loaded sklearn object: </span><span class="si">{</span><span class="n">loaded_sklearn_object_version</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">Current version: </span><span class="si">{</span><span class="n">sklearn_current_version</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">,</span>
+            <span class="n">category</span><span class="o">=</span><span class="ne">UserWarning</span>
+        <span class="p">)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">ds_utils 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Kieran O&#39;Sullivan.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,179 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>hypothesis_testing &#8212; ds_utils 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="sklearn_utils" href="sklearn_utils.html" />
+    <link rel="prev" title="Welcome to ds_utils’s documentation!" href="../index.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="sklearn_utils.html" title="sklearn_utils"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../index.html" title="Welcome to ds_utils’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">ds_utils 0.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="hypothesis-testing">
+<h1>hypothesis_testing<a class="headerlink" href="#hypothesis-testing" title="Permalink to this headline">¶</a></h1>
+<p>Setting up and evaluating experiments.</p>
+<div class="section" id="module-contents">
+<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#module-ds_utils.hypothesis_testing.set_up_experiment" title="ds_utils.hypothesis_testing.set_up_experiment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ds_utils.hypothesis_testing.set_up_experiment</span></code></a></p></td>
+<td><p>Helper functions when setting up an experiment.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-ds_utils.hypothesis_testing.set_up_experiment">
+<span id="set-up-experiment"></span><h3>set_up_experiment<a class="headerlink" href="#module-ds_utils.hypothesis_testing.set_up_experiment" title="Permalink to this headline">¶</a></h3>
+<p>Helper functions when setting up an experiment.</p>
+<dl class="py function">
+<dt id="ds_utils.hypothesis_testing.set_up_experiment.calculate_required_sample_size">
+<code class="sig-prename descclassname">ds_utils.hypothesis_testing.set_up_experiment.</code><code class="sig-name descname">calculate_required_sample_size</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">baseline_metric_value</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">new_metric_value</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">measurement_type</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">alternative_hypothesis</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'two-sided'</span></em>, <em class="sig-param"><span class="n">power</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.8</span></em>, <em class="sig-param"><span class="n">significance_level</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.05</span></em>, <em class="sig-param"><span class="n">standard_deviation</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="../_modules/ds_utils/hypothesis_testing/set_up_experiment.html#calculate_required_sample_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ds_utils.hypothesis_testing.set_up_experiment.calculate_required_sample_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the required sample size for an experiment given a certain degree of change that we want to confidently
+detect.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>baseline_metric_value</strong> (<em>float</em>) – Baseline value that reflects the current metric we are trying to change e.g. the existing retention rate.</p></li>
+<li><p><strong>new_metric_value</strong> (<em>float</em>) – The smallest meaningful effect that we wish to be able to detect i.e. at what point do the results become
+commercially interesting e.g. 85% retention vs 80% baseline may be the smallest shift which yield a financial
+benefit that makes the project worth implementing.</p></li>
+<li><p><strong>measurement_type</strong> (<em>str</em><em> (</em><em>must be 'proportion'</em><em> or </em><em>'mean'</em><em>)</em>) – Whether the metric is a proportion (e.g. % conversion rate) or mean (e.g. average spend).</p></li>
+<li><p><strong>alternative_hypothesis</strong> (<em>str</em><em> (</em><em>default is 'two-sided'</em><em>)</em>) – Whether you are running a ‘two-sided’ test, or checking whether the new metric will be ‘smaller’ or ‘larger’.
+‘two-sided’ is generally recommended because we do not know in advance whether the change in our experiment
+will yield positive or negative results.</p></li>
+<li><p><strong>power</strong> (<em>float in interval</em><em> (</em><em>0</em><em>,</em><em>1</em><em>) </em><em>(</em><em>default is 0.8</em><em>)</em>) – Probability that the test correctly rejects the Null Hypothesis if the Alternative Hypothesis is true
+i.e. likelihood of detecting a shift when it is genuine (one minus the probability of a type II error).
+Default value of 80% is commonly used but you should consider what is appropriate given the business context.</p></li>
+<li><p><strong>significance_level</strong> (<em>float in interval</em><em> (</em><em>0</em><em>,</em><em>1</em><em>) </em><em>(</em><em>default is 0.05</em><em>)</em>) – The significance level/probability of a type I error, i.e. likelihood of a false positive (incorrectly rejecting
+the Null Hypothesis when it is in fact true). Default value of 5% is commonly used but you should consider what
+is appropriate given the business context.</p></li>
+<li><p><strong>standard_deviation</strong> (<em>float</em><em> (</em><em>default is none</em><em>)</em>) – Standard deviation for the metric being tested. Only needs to be set if <cite>measurement_type</cite> is ‘mean’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Minimum sample size required to satisfy experiment criteria.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>TypeError</strong> – If <cite>measurement_type</cite> is ‘mean’ but not <cite>standard_deviation</cite> provided.</p></li>
+<li><p><strong>ValueError</strong> – If <cite>significance_level</cite> or <cite>power</cite> not in range (0,1).
+    If <cite>measurement_type</cite> not in [‘proportion’, ‘mean’].</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">hypothesis_testing</a><ul>
+<li><a class="reference internal" href="#module-contents">Module contents</a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a><ul>
+<li><a class="reference internal" href="#module-ds_utils.hypothesis_testing.set_up_experiment">set_up_experiment</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../index.html"
+                        title="previous chapter">Welcome to ds_utils’s documentation!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="sklearn_utils.html"
+                        title="next chapter">sklearn_utils</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/modules/hypothesis_testing.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="sklearn_utils.html" title="sklearn_utils"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../index.html" title="Welcome to ds_utils’s documentation!"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">ds_utils 0.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Kieran O&#39;Sullivan.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+    </div>
+  </body>
+</html>

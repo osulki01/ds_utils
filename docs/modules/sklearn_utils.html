@@ -1,0 +1,247 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>sklearn_utils &#8212; ds_utils 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="hypothesis_testing" href="hypothesis_testing.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="hypothesis_testing.html" title="hypothesis_testing"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">ds_utils 0.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="sklearn-utils">
+<h1>sklearn_utils<a class="headerlink" href="#sklearn-utils" title="Permalink to this headline">¶</a></h1>
+<p>Helper functions when working with the Scikit-learn library.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The terms Scikit-learn and sklearn are used interchangeably.</p>
+</div>
+<div class="section" id="contents">
+<h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
+<div class="contents local topic" id="id1">
+<ul class="simple">
+<li><p><a class="reference internal" href="#saving-and-loading-scikit-learn-objects" id="id2">Saving and Loading Scikit-learn Objects</a></p></li>
+<li><p><a class="reference internal" href="#module-overview" id="id3">Module Overview</a></p></li>
+<li><p><a class="reference internal" href="#submodules" id="id4">Submodules</a></p></li>
+</ul>
+</div>
+<div class="section" id="saving-and-loading-scikit-learn-objects">
+<h3><a class="toc-backref" href="#id2">Saving and Loading Scikit-learn Objects</a><a class="headerlink" href="#saving-and-loading-scikit-learn-objects" title="Permalink to this headline">¶</a></h3>
+<p><strong>Saving</strong></p>
+<p>When working with Scikit-learn, and machine learning in general, different versions of the library you are using can
+yield different outputs or inconsistent functionality.</p>
+<p>To solve the problem of “it works on my machine”, it is generally recommended to make use of
+<a class="reference external" href="https://www.docker.com/why-docker">Docker</a>, or at least a virtual environment.</p>
+<p>However, there may still be occasions when working with Scikit-learn models that you have inherited from a colleague,
+or even one that you have worked on previously, when you are left wondering what version of Scikit-learn it was
+originally created with.</p>
+<p><code class="xref py py-func docutils literal notranslate"><span class="pre">ds_utils.sk_io.save_pickled_sklearn_object_and_version()</span></code> can be used to save both the
+Scikit-learn object, and the version of Scikit-learn currently running.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">preprocessing</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ds_utils.sklearn_utils</span> <span class="kn">import</span> <span class="n">sk_io</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scaler</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">StandardScaler</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scaler</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sk_io</span><span class="o">.</span><span class="n">save_pickled_sklearn_object_and_version</span><span class="p">(</span><span class="n">scaler</span><span class="p">,</span> <span class="s1">&#39;scaler_and_sklearn_version.pkl&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In order to overwrite an existing file, you must request <code class="xref py py-data docutils literal notranslate"><span class="pre">overwrite</span></code> mode.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Attempt to overwrite an existing file</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">sk_io</span><span class="o">.</span><span class="n">save_pickled_sklearn_object_and_version</span><span class="p">(</span><span class="n">scaler</span><span class="p">,</span> <span class="s1">&#39;scaler_and_sklearn_version.pkl&#39;</span><span class="p">)</span>
+<span class="ne">FileExistsError</span><span class="p">:</span> <span class="n">File</span> <span class="n">new_sklearn_file</span><span class="o">.</span><span class="n">pkl</span> <span class="n">already</span> <span class="n">exists</span><span class="o">.</span>
+
+<span class="c1"># Successfully overwrite an existing file</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">sk_io</span><span class="o">.</span><span class="n">save_pickled_sklearn_object_and_version</span><span class="p">(</span>
+<span class="o">&gt;&gt;&gt;</span>   <span class="n">sklearn_object</span><span class="o">=</span><span class="n">scaler</span><span class="p">,</span>
+<span class="o">&gt;&gt;&gt;</span>   <span class="n">filename_or_path</span><span class="o">=</span><span class="s1">&#39;scaler_and_sklearn_version.pkl&#39;</span><span class="p">,</span>
+<span class="hll"><span class="o">&gt;&gt;&gt;</span>   <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span class="o">&gt;&gt;&gt;</span> <span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Only use <code class="xref py py-func docutils literal notranslate"><span class="pre">ds_utils.sk_io.save_pickled_sklearn_object_and_version()</span></code> when saving an sklearn object you have
+trained/created yourself, not an already-pickled object that you have loaded from elsewhere, as you do not know
+whether your version of sklearn is the same as the one used to originally create it.</p>
+</div>
+<p><strong>Loading</strong></p>
+<p>Your Scikit-learn object and the running version of Scikit-learn have now been saved together as a Tuple in a
+<a class="reference external" href="https://docs.python.org/3/library/pickle.html">pickled</a> object.</p>
+<p>They can now be loaded using <code class="xref py py-func docutils literal notranslate"><span class="pre">ds_utils.sk_io.save_pickled_sklearn_object_and_version()</span></code>. This method will issue
+a warning if the version associated with the loaded object differs to the one that you are currently warning.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">loaded_sklearn_object</span><span class="p">,</span> <span class="n">loaded_sklearn_version</span> <span class="o">=</span> <span class="n">sk_io</span><span class="o">.</span><span class="n">load_pickled_sklearn_object_and_version</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>  <span class="n">filename_or_path</span><span class="o">=</span><span class="s1">&#39;scaler_and_sklearn_version.pkl&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">loaded_sklearn_object</span><span class="p">))</span>
+<span class="go">&lt;class &#39;sklearn.preprocessing._data.StandardScaler&#39;&gt;</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">loaded_sklearn_version</span><span class="p">)</span>
+<span class="go">0.23.1</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="module-overview">
+<h3><a class="toc-backref" href="#id3">Module Overview</a><a class="headerlink" href="#module-overview" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#module-ds_utils.sklearn_utils.sk_io" title="ds_utils.sklearn_utils.sk_io"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ds_utils.sklearn_utils.sk_io</span></code></a></p></td>
+<td><p>Saving and loading sklearn objects.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="submodules">
+<h3><a class="toc-backref" href="#id4">Submodules</a><a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="module-ds_utils.sklearn_utils.sk_io">
+<span id="sk-io"></span><h4>sk_io<a class="headerlink" href="#module-ds_utils.sklearn_utils.sk_io" title="Permalink to this headline">¶</a></h4>
+<p>Saving and loading sklearn objects.</p>
+<dl class="py function">
+<dt id="ds_utils.sklearn_utils.sk_io.load_pickled_sklearn_object_and_version">
+<code class="sig-prename descclassname">ds_utils.sklearn_utils.sk_io.</code><code class="sig-name descname">load_pickled_sklearn_object_and_version</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename_or_path</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; Tuple<a class="reference internal" href="../_modules/ds_utils/sklearn_utils/sk_io.html#load_pickled_sklearn_object_and_version"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ds_utils.sklearn_utils.sk_io.load_pickled_sklearn_object_and_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a pickled sklearn object and the sklearn version associated with when the sklearn object was saved.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename_or_path</strong> (<em>str</em>) – Location where the sklearn object and its version is saved.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>sklearn_object: sklearn object.
+str: Version of sklearn when the object was saved.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Tuple[sklearn_object, str]</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>UserWarning</strong> – If the sklearn version associated with the loaded object is different to the current version of sklearn being
+    used.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="ds_utils.sklearn_utils.sk_io.save_pickled_sklearn_object_and_version">
+<code class="sig-prename descclassname">ds_utils.sklearn_utils.sk_io.</code><code class="sig-name descname">save_pickled_sklearn_object_and_version</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sklearn_object</span></em>, <em class="sig-param"><span class="n">filename_or_path</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">overwrite</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/ds_utils/sklearn_utils/sk_io.html#save_pickled_sklearn_object_and_version"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ds_utils.sklearn_utils.sk_io.save_pickled_sklearn_object_and_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves sklearn object as a pickle file, along with the version of the sklearn library that is currently being used.</p>
+<p>Only use when saving an sklearn object you have trained/created yourself, not an already-pickled object that you
+have loaded from elsewhere, as you do not know whether your version of sklearn is the same as the one used to
+originally create it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sklearn_object</strong> (<em>sklearn object</em>) – Model/sklearn-object to be saved.</p></li>
+<li><p><strong>filename_or_path</strong> (<em>str</em>) – Target where the object and its version will be saved.</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em> (</em><em>default is False</em><em>)</em>) – Whether to overwrite file if it already exists.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>FileExistsError</strong> – If the <cite>filename_or_path</cite> already exists and user did not set <cite>overwrite</cite> mode.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">sklearn_utils</a><ul>
+<li><a class="reference internal" href="#contents">Contents</a><ul>
+<li><a class="reference internal" href="#saving-and-loading-scikit-learn-objects">Saving and Loading Scikit-learn Objects</a></li>
+<li><a class="reference internal" href="#module-overview">Module Overview</a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a><ul>
+<li><a class="reference internal" href="#module-ds_utils.sklearn_utils.sk_io">sk_io</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="hypothesis_testing.html"
+                        title="previous chapter">hypothesis_testing</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/modules/sklearn_utils.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="hypothesis_testing.html" title="hypothesis_testing"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">ds_utils 0.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Kieran O&#39;Sullivan.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+    </div>
+  </body>
+</html>
