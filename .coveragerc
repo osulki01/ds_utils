@@ -1,0 +1,22 @@
+[run]
+omit =
+    # omit anything in a .local directory anywhere
+    */.local/*
+    # omit everything in /usr
+    /usr/*
+    # Setup and regular package files
+    **/setup.py
+    **/__init__.py
+
+[report]
+omit =
+    # omit anything in a .local directory anywhere
+    */.local/*
+    # omit everything in /usr
+    /usr/*
+    # Setup and regular package files
+    **/setup.py
+    **/__init__.py
+
+[html]
+directory = coverage_html_report

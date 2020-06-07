@@ -69,6 +69,7 @@ pip-delete-this-directory.txt
 
 # Unit test / coverage reports
 htmlcov/
+coverage_html_report/
 .tox/
 .nox/
 .coverage
@@ -94,5 +95,4 @@ coverage.xml
 
 
 ### Sphinx documentation ###
-
 /sphinx/_build
