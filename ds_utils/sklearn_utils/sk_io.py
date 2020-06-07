@@ -52,11 +52,11 @@ def save_pickled_sklearn_object_and_version(
         overwrite: bool = False
 ) -> None:
     """
-    Saves sklearn object as a pickle file, along with the running version of the sklearn library.
+    Saves sklearn object as a pickle file, along with the version of the sklearn library that is currently being used.
 
-    Should only be used to save an sklearn object you have trained/created yourself, not an already-pickled object that
-    you have loaded, as it will save the sklearn version that you are currently running rather than the one used to
-    originally create the sklearn object.
+    Only use when saving an sklearn object you have trained/created yourself, not an already-pickled object that you
+    have loaded from elsewhere, as you do not know whether your version of sklearn is the same as the one used to
+    originally create it.
 
     Parameters
     ----------
@@ -70,7 +70,7 @@ def save_pickled_sklearn_object_and_version(
     Raises
     ----------
     FileExistsError
-        If a `filename_or_path` already exists and user did not set `overwrite` mode.
+        If the `filename_or_path` already exists and user did not set `overwrite` mode.
     """
 
     # Exit if file already exists and user did not choose to overwrite
@@ -80,8 +80,10 @@ def save_pickled_sklearn_object_and_version(
 
     sklearn_object_and_version = (sklearn_object, sklearn.__version__)
 
-    # If the directory does not already exist, then create it
-    os.makedirs(path.dirname(filename_or_path), exist_ok=True)
+    # If a full filepath has been provided, and the directory does not already exist, then create it
+    directory = path.dirname(filename_or_path)
+    if directory != '':
+        os.makedirs(directory, exist_ok=True)
 
     # Save both the sklearn object and version of sklearn
     with open(filename_or_path, 'wb') as target_destination:
