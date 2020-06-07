@@ -6,12 +6,12 @@ Testing for saving and loading sklearn objects.
 import os
 from os import path
 import pickle
-from pyfakefs.pytest_plugin import fs
-import pytest
 
 # Third party imports
 import sklearn
 from sklearn import preprocessing
+from pyfakefs.pytest_plugin import fs
+import pytest
 
 # Local application imports
 from ds_utils.sklearn_utils import sk_io
@@ -50,8 +50,6 @@ def test_load_pickled_sklearn_object_and_version(fs, sklearn_scaler_object, skle
     assert isinstance(loaded_sklearn_object, type(sklearn_scaler_object))
 
     assert loaded_sklearn_version == sklearn_current_version
-
-
 
 
 def test_save_pickled_sklearn_object_and_version_handles_existing_directory(fs, sklearn_scaler_object):
