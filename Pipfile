@@ -19,6 +19,19 @@ statsmodels = "*"
 python_version = "3.7"
 
 [scripts]
-lint_all = 'pylint ds_utils --ignore-patterns="test_.*?py" --max-line-length=120'
+# Test coverage
+coverage_check = 'coverage run -m pytest'
+coverage_html = 'coverage html'
+coverage_report = 'coverage report'
+# Check code quality of all non test python scripts
 lint = 'pylint --max-line-length=120'
+# Clean all local sphinx documentation in the sphinx/_build directory
+sphinx_clean = 'make -C ./sphinx clean'
+# Create local sphinx documentation to be sense checked
+sphinx_document = 'make -C ./sphinx html'
+# Clean local sphinx documentation, recreate it, and then overwrite the ./docs folder with its output.
+# This folder is then hosted on GitHub pages as standalone documentation of the package, which is then updated when
+# the ./docs directory is pushed to GitHub
+sphinx_document_github = 'make -C ./sphinx github'
+# Run all tests using pytest module
 test = 'pytest'
