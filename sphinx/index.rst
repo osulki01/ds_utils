@@ -1,17 +1,39 @@
-.. ds_utils documentation master file, created by
+.. ds_utils documentation master file, originally created by
    sphinx-quickstart on Sun May 24 13:55:25 2020.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+
 
 Welcome to ds_utils's documentation!
-====================================
+=====================================
+
+ds_utils is a collection of utility functions designed to make data science tasks easier, and fill in some small gaps
+that existing libraries do not cover.
+
+It is not currently an installable package, but the plan is to make it so.
+
+
+Use Cases
+=========
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+   :maxdepth: 1
 
-   ds_utils/sklearn_utils
+   Hypothesis Testing <modules/hypothesis_testing>
+   Scikit-learn Utilities <modules/sklearn_utils>
 
+
+.. installation:
+
+Installation
+============
+
+
+Modules
+=======
+
+.. autosummary::
+
+   ds_utils.hypothesis_testing
+   ds_utils.sklearn_utils
 
 
 Indices and tables
