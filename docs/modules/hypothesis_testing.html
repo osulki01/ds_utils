@@ -4,7 +4,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>hypothesis_testing &#8212; ds_utils 0.0.1 documentation</title>
+    <title>ds_utils.hypothesis_testing &#8212; ds_utils 0.0.1 documentation</title>
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -14,7 +14,7 @@
     <script src="../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="sklearn_utils" href="sklearn_utils.html" />
+    <link rel="next" title="ds_utils.sklearn_utils" href="sklearn_utils.html" />
     <link rel="prev" title="Welcome to ds_utils’s documentation!" href="../index.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -27,7 +27,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="sklearn_utils.html" title="sklearn_utils"
+          <a href="sklearn_utils.html" title="ds_utils.sklearn_utils"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="../index.html" title="Welcome to ds_utils’s documentation!"
@@ -41,11 +41,192 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="hypothesis-testing">
-<h1>hypothesis_testing<a class="headerlink" href="#hypothesis-testing" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="ds-utils-hypothesis-testing">
+<h1>ds_utils.hypothesis_testing<a class="headerlink" href="#ds-utils-hypothesis-testing" title="Permalink to this headline">¶</a></h1>
 <p>Setting up and evaluating experiments.</p>
-<div class="section" id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Much of the underlying functionality in this module is handled by the excellent
+<a class="reference external" href="https://www.statsmodels.org/stable/index.html">statsmodels</a> package.</p>
+</div>
+<div class="section" id="contents">
+<h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
+<div class="contents local topic" id="id1">
+<ul class="simple">
+<li><p><a class="reference internal" href="#how-big-should-my-sample-be" id="id2">How Big Should My Sample Be?</a></p></li>
+<li><p><a class="reference internal" href="#creating-your-experimental-groups" id="id3">Creating Your Experimental Groups</a></p></li>
+<li><p><a class="reference internal" href="#testing-for-significance" id="id4">Testing For Significance</a></p></li>
+<li><p><a class="reference internal" href="#module-overview" id="id5">Module Overview</a></p></li>
+<li><p><a class="reference internal" href="#submodules" id="id6">Submodules</a></p></li>
+</ul>
+</div>
+<div class="section" id="how-big-should-my-sample-be">
+<h3><a class="toc-backref" href="#id2">How Big Should My Sample Be?</a><a class="headerlink" href="#how-big-should-my-sample-be" title="Permalink to this headline">¶</a></h3>
+<p>When designing an experiment, you will want to ensure you have a statistically significant sample. The online fashion
+retailer Stitch Fix has written a terrific
+<a class="reference external" href="https://multithreaded.stitchfix.com/blog/2015/05/26/significant-sample/">article</a> on the aspects that you should
+consider.</p>
+<p><a class="reference internal" href="#ds_utils.hypothesis_testing.set_up_experiment.calculate_required_sample_size" title="ds_utils.hypothesis_testing.set_up_experiment.calculate_required_sample_size"><code class="xref py py-func docutils literal notranslate"><span class="pre">ds_utils.hypothesis_testing.set_up_experiment.calculate_required_sample_size()</span></code></a> is designed to help you express
+these considerations and gain an indication of how big your sample size should be.</p>
+<p>Firstly, you must identify what metric you are trying to change, and what a meaningful shift would represent. Often
+this involves liaising with Commercial Finance colleagues or those who know the domain best, to attach a £ value to
+changes in the metric and understand at what point the shift becomes worth pursuing.</p>
+<p>Once you have gone through this process, you know what the values for <code class="xref py py-data docutils literal notranslate"><span class="pre">baseline_metric_value</span></code>,
+<code class="xref py py-data docutils literal notranslate"><span class="pre">new_metric_value</span></code>, and <code class="xref py py-data docutils literal notranslate"><span class="pre">measurement_type</span></code> should be. The <code class="xref py py-data docutils literal notranslate"><span class="pre">measurement_type</span></code> is important
+because whether you are measuring a mean or a percentage dictates what type of testing you will be using.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This method makes calculations on the proviso that you will be using a z-test when measuring proportions, and a
+t-test when measuring means. This involves the assumption that you will have at least 10 records that display the
+positive and negative binary classes when it comes to a proportion, and that the data is normally distributed and we
+do not know the true population standard deviation when it comes to means.</p>
+<p>This <a class="reference external" href="https://bloomingtontutors.com/blog/when-to-use-the-z-test-versus-t-test">flow-chart</a> articulates the reasons
+why particularly well.</p>
+</div>
+<p>For instance, you may have a web journey with a 50% conversion rate, and an increase to 55% would make it worthwhile
+implementing the change you are testing.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ds_utils.hypothesis_testing</span> <span class="kn">import</span> <span class="n">set_up_experiment</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">suggested_sample_size</span> <span class="o">=</span> <span class="n">set_up_experiment</span><span class="o">.</span><span class="n">calculate_required_sample_size</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">baseline_metric_value</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">new_metric_value</span><span class="o">=</span><span class="mf">0.55</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">measurement_type</span><span class="o">=</span><span class="s1">&#39;proportion,</span>
+<span class="gp">... </span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">suggested_sample_size</span><span class="p">)</span>
+<span class="go">1564</span>
+</pre></div>
+</div>
+<p>In cases where you are measuring a mean, such as average spend per user, you will also need to know the standard
+deviation in order to calculate your sample size. In this scenario, we know that users typically spend £10.25. If we
+can increase that to £10.75 then we would be happy with the outcome, and we know from observing spend in recent periods
+that the average spend has a standard deviation of £5.55.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ds_utils.hypothesis_testing</span> <span class="kn">import</span> <span class="n">set_up_experiment</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">suggested_sample_size</span> <span class="o">=</span> <span class="n">set_up_experiment</span><span class="o">.</span><span class="n">calculate_required_sample_size</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">baseline_metric_value</span><span class="o">=</span><span class="mf">10.25</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">new_metric_value</span><span class="o">=</span><span class="mf">10.75</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">measurement_type</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span>
+<span class="hll"><span class="gp">... </span>    <span class="n">standard_deviation</span><span class="o">=</span><span class="mf">5.55</span><span class="p">,</span>
+</span><span class="gp">... </span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">suggested_sample_size</span><span class="p">)</span>
+<span class="go">1935</span>
+</pre></div>
+</div>
+<p>Depending on your experiment, you can also specify additional parameters:</p>
+<ul class="simple">
+<li><p>Whether your test is <a class="reference external" href="https://stats.idre.ucla.edu/other/mult-pkg/faq/general/faq-what-are-the-differences-between-one-tailed-and-two-tailed-tests/">one-tailed/two-tailed</a>.
+The default for <code class="xref py py-data docutils literal notranslate"><span class="pre">alternative_hypothesis</span></code> is ‘two-sided’ because we’re generally open to learning if the
+metric worsens, not only if it improves.</p></li>
+<li><p>The <a class="reference external" href="https://www.statisticsteacher.org/2017/09/15/what-is-power/">statistical power</a> i.e. the probability of
+detecting a change if it does indeed exist. The default value for <code class="xref py py-data docutils literal notranslate"><span class="pre">power</span></code> is 0.8 but you should consider the
+context of your experiment i.e. if there is a big risk associated with failing to detect a genuine effect, then you
+may want to increase your power.</p></li>
+<li><p>The <a class="reference external" href="https://en.wikipedia.org/wiki/Statistical_significance">significance level</a> i.e. the false positive rate. Once
+again, consider your context, and if there is a big risk associated with determining that a effect exists when it does
+not, then you may want to reduce your <code class="xref py py-data docutils literal notranslate"><span class="pre">significance_level</span></code> from the default of 5%.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ds_utils.hypothesis_testing</span> <span class="kn">import</span> <span class="n">set_up_experiment</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">suggested_sample_size</span> <span class="o">=</span> <span class="n">set_up_experiment</span><span class="o">.</span><span class="n">calculate_required_sample_size</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">baseline_metric_value</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">new_metric_value</span><span class="o">=</span><span class="mf">0.55</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">measurement_type</span><span class="o">=</span><span class="s1">&#39;proportion&#39;</span><span class="p">,</span>
+<span class="hll"><span class="gp">... </span>    <span class="n">alternative_hypothesis</span><span class="o">=</span><span class="s1">&#39;larger&#39;</span><span class="p">,</span>
+</span><span class="hll"><span class="gp">... </span>    <span class="n">power</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+</span><span class="hll"><span class="gp">... </span>    <span class="n">significance_level</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+</span><span class="gp">... </span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">suggested_sample_size</span><span class="p">)</span>
+<span class="go">2594</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="creating-your-experimental-groups">
+<h3><a class="toc-backref" href="#id3">Creating Your Experimental Groups</a><a class="headerlink" href="#creating-your-experimental-groups" title="Permalink to this headline">¶</a></h3>
+<p>Once you know how big your sample sizes should be, you will need to create individual groups that will make up the
+experiment.</p>
+<p>The function <a class="reference internal" href="#ds_utils.hypothesis_testing.set_up_experiment.create_sample_groups" title="ds_utils.hypothesis_testing.set_up_experiment.create_sample_groups"><code class="xref py py-func docutils literal notranslate"><span class="pre">ds_utils.hypothesis_testing.set_up_experiment.create_sample_groups()</span></code></a> allows you to randomly
+assign records from a dataframe to distinct experimental groups.</p>
+<p>Let’s assume we have a group of people where we know their eye colour; this won’t be used to separate them into sample
+groups, but we may want to retain that information for the analysis, or checking that our sample groups have a similarly
+representative distribution.</p>
+<p>This is our starting dataset, which will have an additional column appended to the end showing the experimental group
+that each row will belong to.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ds_utils.hypothesis_testing</span> <span class="kn">import</span> <span class="n">set_up_experiment</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">population_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;user_id&#39;</span><span class="p">,</span> <span class="s1">&#39;eye_colour&#39;</span><span class="p">],</span>
+<span class="gp">... </span>                             <span class="n">data</span><span class="o">=</span><span class="p">[[</span><span class="mi">86</span><span class="p">,</span> <span class="s1">&#39;blue&#39;</span><span class="p">],</span>
+<span class="gp">... </span>                                   <span class="p">[</span><span class="mi">54</span><span class="p">,</span> <span class="s1">&#39;brown&#39;</span><span class="p">],</span>
+<span class="gp">... </span>                                   <span class="p">[</span><span class="mi">31</span><span class="p">,</span> <span class="s1">&#39;green&#39;</span><span class="p">],</span>
+<span class="gp">... </span>                                   <span class="p">[</span><span class="mi">95</span><span class="p">,</span> <span class="s1">&#39;hazel&#39;</span><span class="p">]])</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">population_df</span>
+
+<span class="go">   user_id   eye_colour</span>
+<span class="go">0       86         blue</span>
+<span class="go">1       54        brown</span>
+<span class="go">2       31        green</span>
+<span class="go">3       95        hazel</span>
+</pre></div>
+</div>
+<p>You can evenly split your dataframe by simply providing a list of names for each of your sample groups.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sample_groups_df</span> <span class="o">=</span> <span class="n">set_up_experiment</span><span class="o">.</span><span class="n">create_sample_groups</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">original_population</span><span class="o">=</span><span class="n">population_df</span><span class="p">,</span>
+<span class="hll"><span class="gp">&gt;&gt;&gt; </span>    <span class="n">sample_groups</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Group 1&#39;</span><span class="p">,</span> <span class="s1">&#39;Group 2&#39;</span><span class="p">],</span>
+</span><span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sample_groups_df</span>
+
+<span class="go">      user_id   eye_colour   sample_group</span>
+<span class="go">0       86            blue        Group 1</span>
+<span class="go">1       54           brown        Group 2</span>
+<span class="go">2       31           green        Group 2</span>
+<span class="go">3       95           hazel        Group 1</span>
+</pre></div>
+</div>
+<p>Alternatively, you can specify the number of records you want to assign to each group. If your sizes do not cover the
+entire population, then the method will only return the records which were assigned to a sample group.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sample_groups_df</span> <span class="o">=</span> <span class="n">set_up_experiment</span><span class="o">.</span><span class="n">create_sample_groups</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">original_population</span><span class="o">=</span><span class="n">population_df</span><span class="p">,</span>
+<span class="hll"><span class="gp">&gt;&gt;&gt; </span>    <span class="n">sample_groups</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Group 1&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;Group 2&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+</span><span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sample_groups_df</span>
+
+<span class="go">      user_id   eye_colour   sample_group</span>
+<span class="go">0       86            blue        Group 1</span>
+<span class="go">2       31           green        Group 2</span>
+<span class="go">3       95           hazel        Group 1</span>
+</pre></div>
+</div>
+<p>Or finally, you can specify the proportion of rows that should be assigned to each group. Once again, if your
+proportions do not cover the entire population, then the method will only return the records which were assigned to a
+sample group.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sample_groups_df</span> <span class="o">=</span> <span class="n">set_up_experiment</span><span class="o">.</span><span class="n">create_sample_groups</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">original_population</span><span class="o">=</span><span class="n">population_df</span><span class="p">,</span>
+<span class="hll"><span class="gp">&gt;&gt;&gt; </span>    <span class="n">sample_groups</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Group 1&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s1">&#39;Group 2&#39;</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">,</span> <span class="s1">&#39;Group 3&#39;</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">},</span>
+</span><span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sample_groups_df</span>
+
+<span class="go">      user_id   eye_colour   sample_group</span>
+<span class="go">0       86            blue        Group 2</span>
+<span class="go">1       54           brown        Group 3</span>
+<span class="go">2       31           green        Group 1</span>
+<span class="go">3       95           hazel        Group 1</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="testing-for-significance">
+<h3><a class="toc-backref" href="#id4">Testing For Significance</a><a class="headerlink" href="#testing-for-significance" title="Permalink to this headline">¶</a></h3>
+<p>When your experiment has run and you have some results to analyse, use
+<code class="xref py py-mod docutils literal notranslate"><span class="pre">ds_utils.hypothesis_testing.evaluation</span></code> to test for significance.</p>
+</div>
+<div class="section" id="module-overview">
+<h3><a class="toc-backref" href="#id5">Module Overview</a><a class="headerlink" href="#module-overview" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -59,9 +240,9 @@
 </table>
 </div>
 <div class="section" id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+<h3><a class="toc-backref" href="#id6">Submodules</a><a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="module-ds_utils.hypothesis_testing.set_up_experiment">
-<span id="set-up-experiment"></span><h3>set_up_experiment<a class="headerlink" href="#module-ds_utils.hypothesis_testing.set_up_experiment" title="Permalink to this headline">¶</a></h3>
+<span id="set-up-experiment"></span><h4>set_up_experiment<a class="headerlink" href="#module-ds_utils.hypothesis_testing.set_up_experiment" title="Permalink to this headline">¶</a></h4>
 <p>Helper functions when setting up an experiment.</p>
 <dl class="py function">
 <dt id="ds_utils.hypothesis_testing.set_up_experiment.calculate_required_sample_size">
@@ -76,7 +257,7 @@ detect.</p>
 commercially interesting e.g. 85% retention vs 80% baseline may be the smallest shift which yield a financial
 benefit that makes the project worth implementing.</p></li>
 <li><p><strong>measurement_type</strong> (<em>str</em><em> (</em><em>must be 'proportion'</em><em> or </em><em>'mean'</em><em>)</em>) – Whether the metric is a proportion (e.g. % conversion rate) or mean (e.g. average spend).</p></li>
-<li><p><strong>alternative_hypothesis</strong> (<em>str</em><em> (</em><em>default is 'two-sided'</em><em>)</em>) – Whether you are running a ‘two-sided’ test, or checking whether the new metric will be ‘smaller’ or ‘larger’.
+<li><p><strong>alternative_hypothesis</strong> (<em>str 'two-sided'</em><em> (</em><em>default</em><em>)</em><em>, </em><em>'larger'</em><em>, </em><em>'smaller'</em>) – Whether you are running a ‘two-sided’ test, or checking whether the new metric will be ‘smaller’ or ‘larger’.
 ‘two-sided’ is generally recommended because we do not know in advance whether the change in our experiment
 will yield positive or negative results.</p></li>
 <li><p><strong>power</strong> (<em>float in interval</em><em> (</em><em>0</em><em>,</em><em>1</em><em>) </em><em>(</em><em>default is 0.8</em><em>)</em>) – Probability that the test correctly rejects the Null Hypothesis if the Alternative Hypothesis is true
@@ -96,14 +277,51 @@ is appropriate given the business context.</p></li>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>TypeError</strong> – If <cite>measurement_type</cite> is ‘mean’ but not <cite>standard_deviation</cite> provided.</p></li>
-<li><p><strong>ValueError</strong> – If <cite>significance_level</cite> or <cite>power</cite> not in range (0,1).
-    If <cite>measurement_type</cite> not in [‘proportion’, ‘mean’].</p></li>
+<li><p><strong>TypeError</strong> – If <cite>measurement_type</cite> is ‘mean’ but no <cite>standard_deviation</cite> provided.</p></li>
+<li><p><strong>ValueError</strong> – If <cite>significance_level</cite> or <cite>power</cite> not in range (0,1).</p></li>
+<li><p><strong>ValueError</strong> – If <cite>measurement_type</cite> not in [‘proportion’, ‘mean’].</p></li>
 </ul>
 </dd>
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt id="ds_utils.hypothesis_testing.set_up_experiment.create_sample_groups">
+<code class="sig-prename descclassname">ds_utils.hypothesis_testing.set_up_experiment.</code><code class="sig-name descname">create_sample_groups</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">original_population</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">sample_groups</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>dict<span class="p">, </span>list<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="../_modules/ds_utils/hypothesis_testing/set_up_experiment.html#create_sample_groups"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ds_utils.hypothesis_testing.set_up_experiment.create_sample_groups" title="Permalink to this definition">¶</a></dt>
+<dd><p>Randomly assign records from a population dataset to distinct sample groups.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>original_population</strong> (<em>pd.DataFrame</em>) – The total dataset from which samples will be drawn.</p></li>
+<li><p><strong>sample_groups</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>float</em><em>] or </em><em>dict</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em>) – Can be a dictionary with the name of each sample group, and its size expressed as a proportion of the
+population or absolute size in terms of number of records. Or this can be a list of the names of each sample
+group, indicating that the population should be split evenly across them.</p></li>
+<li><p><strong>original_population</strong> – The total dataset from which samples will be drawn.</p></li>
+<li><p><strong>sample_groups</strong> – Keys: The names of each sample group
+Values: How big they should be.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Copy of the original dataset, but with an additional column called ‘sample_group’ denoting the group that
+each record has been assigned to, and only containing records that have been assigned (e.g. if we took a sample
+that is smaller than the population).</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If the values provided for the sizes of each sample group are not all floats (proportions), or all integers
+    (absolute sizes).</p></li>
+<li><p><strong>ValueError</strong> – If the proportions do not adhere to 0 &lt; proportion &lt; 1.</p></li>
+<li><p><strong>ValueError</strong> – If the proportions sum up to more than 1.</p></li>
+<li><p><strong>ValueError</strong> – If the absolute sizes sum up to more than the size of the original population.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
 </div>
 </div>
 </div>
@@ -116,10 +334,16 @@ is appropriate given the business context.</p></li>
         <div class="sphinxsidebarwrapper">
   <h3><a href="../index.html">Table of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">hypothesis_testing</a><ul>
-<li><a class="reference internal" href="#module-contents">Module contents</a></li>
+<li><a class="reference internal" href="#">ds_utils.hypothesis_testing</a><ul>
+<li><a class="reference internal" href="#contents">Contents</a><ul>
+<li><a class="reference internal" href="#how-big-should-my-sample-be">How Big Should My Sample Be?</a></li>
+<li><a class="reference internal" href="#creating-your-experimental-groups">Creating Your Experimental Groups</a></li>
+<li><a class="reference internal" href="#testing-for-significance">Testing For Significance</a></li>
+<li><a class="reference internal" href="#module-overview">Module Overview</a></li>
 <li><a class="reference internal" href="#submodules">Submodules</a><ul>
 <li><a class="reference internal" href="#module-ds_utils.hypothesis_testing.set_up_experiment">set_up_experiment</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -131,7 +355,7 @@ is appropriate given the business context.</p></li>
                         title="previous chapter">Welcome to ds_utils’s documentation!</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="sklearn_utils.html"
-                        title="next chapter">sklearn_utils</a></p>
+                        title="next chapter">ds_utils.sklearn_utils</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -163,7 +387,7 @@ is appropriate given the business context.</p></li>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="sklearn_utils.html" title="sklearn_utils"
+          <a href="sklearn_utils.html" title="ds_utils.sklearn_utils"
              >next</a> |</li>
         <li class="right" >
           <a href="../index.html" title="Welcome to ds_utils’s documentation!"

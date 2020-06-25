@@ -1,7 +1,7 @@
 .. sklearn_utils:
 
-sklearn_utils
-=====================================
+ds_utils.sklearn_utils
+======================
 
 Helper functions when working with the Scikit-learn library.
 
@@ -93,7 +93,6 @@ a warning if the version associated with the loaded object differs to the one th
 
 Module Overview
 ---------------
-
 
 .. autosummary::
 
