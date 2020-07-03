@@ -23,7 +23,7 @@ python_version = "3.7"
 coverage_check = 'coverage run -m pytest'
 coverage_html = 'coverage html'
 coverage_report = 'coverage report'
-# Check code quality of all non test python scripts
+# Check code quality
 lint = 'pylint --max-line-length=120'
 # Clean all local sphinx documentation in the sphinx/_build directory
 sphinx_clean = 'make -C ./sphinx clean'
