@@ -141,130 +141,14 @@ def test_calculate_required_sample_size_raises_exception_if_means_provided_witho
     should not run if no standard deviation is given when that is the measurement type.
     """
 
-    with pytest.raises(TypeError):
+    with pytest.raises(
+            TypeError,
+            match="When measuring a mean for your test, you must also specify its existing `standard_deviation`."
+    ):
         set_up_experiment.calculate_required_sample_size(
             baseline_metric_value=pytest.baseline_metric_value,
             new_metric_value=pytest.new_metric_value,
             measurement_type='mean',
-        )
-
-
-def test_calculate_required_sample_size_raises_exception_if_measurement_type_incorrect(
-        global_variables_for_calculate_required_sample_size
-):
-    """
-    The measurement_type must be "proportion" or "mean".
-    """
-
-    invalid_measurement_type = 'invalid'
-
-    with pytest.raises(ValueError):
-        set_up_experiment.calculate_required_sample_size(
-            baseline_metric_value=pytest.baseline_metric_value,
-            new_metric_value=pytest.new_metric_value,
-            # Pass invalid argument
-            measurement_type=invalid_measurement_type,
-        )
-
-
-@pytest.mark.parametrize('invalid_power', [-1, 0, 1])
-def test_calculate_required_sample_size_raises_exception_if_power_outside_acceptable_range(
-        global_variables_for_calculate_required_sample_size,
-        invalid_power,
-):
-    """
-    Power is a percentage, and exception should be raised if condition 0 < power < 1 not met.
-    """
-
-    # Invalid arguments for power
-    with pytest.raises(ValueError):
-        set_up_experiment.calculate_required_sample_size(
-            baseline_metric_value=pytest.baseline_metric_value,
-            new_metric_value=pytest.new_metric_value,
-            measurement_type='proportion',
-            # Pass invalid argument
-            power=invalid_power,
-        )
-
-
-@pytest.mark.parametrize('invalid_significance_level', [-1, 0, 1])
-def test_calculate_required_sample_size_raises_exception_if_significance_outside_acceptable_range(
-        global_variables_for_calculate_required_sample_size,
-        invalid_significance_level,
-):
-    """
-    Significance level is a percentage, and exception should be raised if condition 0 < significance_level < 1 not met.
-    """
-
-    with pytest.raises(ValueError):
-        set_up_experiment.calculate_required_sample_size(
-            baseline_metric_value=pytest.baseline_metric_value,
-            new_metric_value=pytest.new_metric_value,
-            measurement_type='proportion',
-            # Pass invalid argument
-            significance_level=invalid_significance_level,
-        )
-
-
-def test__check_if_sample_sizes_are_proportions_or_absolute_recognises_absolute_sizes():
-    """Recognise that integers represent absolute number of records to be assigned to each sample group."""
-
-    sample_groups = {'Group_1': 50, 'Group_2': 25, 'Group_3': 25}
-    assert set_up_experiment._check_if_sample_sizes_are_proportions_or_absolute(sample_groups) == 'absolute'
-
-
-def test__check_if_sample_sizes_are_proportions_or_absolute_recognises_proportions():
-    """Recognise that floats represent proportions of the population to be assigned to each sample group."""
-
-    sample_groups = {'Group_1': 0.5, 'Group_2': 0.25, 'Group_3': 0.25}
-    assert set_up_experiment._check_if_sample_sizes_are_proportions_or_absolute(sample_groups) == 'proportion'
-
-
-@pytest.mark.parametrize(
-    'inconsistent_sample_size_types',
-    [
-        {'Group_1': 0.5, 'Group_2': 25, 'Group_3': 25},
-        {'Group_1': 50, 'Group_2': 0.25, 'Group_3': 25},
-        {'Group_1': 50, 'Group_2': 25, 'Group_3': 0.25},
-    ]
-)
-def test__check_if_sample_sizes_are_proportions_or_absolute_requires_consistent_size_type(
-        inconsistent_sample_size_types
-):
-    """
-    When the size of each sample group, all of the size must be floats (for proportions) or integers (for absolute
-    sizes).
-    """
-
-    with pytest.raises(ValueError):
-        set_up_experiment._check_if_sample_sizes_are_proportions_or_absolute(inconsistent_sample_size_types)
-
-
-@pytest.mark.parametrize(
-    'invalid_sample_sizes, size_type',
-    [
-        ({'Group_1': 0.5, 'Group_2': 0.5, 'Group_3': 0.5}, 'proportion'),  # Sum of proportions greater than 1
-        ({'Group_1': -0.5, 'Group_2': 0.25, 'Group_3': 0.25}, 'proportion'),  # One proportion value <= 0
-        ({'Group_1': 1.5, 'Group_2': 0.25, 'Group_3': 0.25}, 'proportion'),  # One proportion value >= 1
-        ({'Group_1': 3, 'Group_2': 3, 'Group_3': 40}, 'absolute'),  # Overall size exceeds that of the population
-    ]
-)
-def test__check_sample_size_values_are_appropriate(
-        invalid_sample_sizes,
-        size_type,
-):
-    """
-    Sample size proportions should not exceed 1 in total, and should all be 0 < proportion < 1.
-    Absolute sizes should not exceed the total population when summed together.
-    """
-
-    original_population_10_rows = pd.DataFrame(np.arange(10), columns=['original_row_index'])
-
-    with pytest.raises(ValueError):
-        set_up_experiment._check_sample_size_values_are_appropriate(
-            original_population=original_population_10_rows,
-            sample_groups=invalid_sample_sizes,
-            size_type=size_type,
         )
 
 
