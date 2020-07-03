@@ -9,8 +9,11 @@ from typing import Tuple
 import numpy as np
 from statsmodels.stats import weightstats
 
+# Local application imports
+from ds_utils.hypothesis_testing import check_experiment_inputs
 
-def parametric_significance_test_on_raw_scores(
+
+def parametric_significance_test_on_raw_observations(
         group_1_observations: np.ndarray,
         group_2_observations: np.ndarray,
         measurement_type: str,
@@ -44,11 +47,18 @@ def parametric_significance_test_on_raw_scores(
     Tuple[float, float]
         (1st value) p-value, i.e. the probability of obtaining results as extreme as the observed result.
         (2nd value) test-statistic, which applies to z-test when measuring proportions, and t-test for means.
+
+    Raises
+    ------
+    ValueError
+        If `significance_level` does not adhere to 0 < significance_level < 1.
+    ValueError
+        If the experiment metric is a proportion, but the individual observations are not all represented as 0 or 1.
     """
 
-    # Invalid significance level
-    if not 0 < significance_level < 1:
-        raise ValueError("significance_level must be greater than 0 but less than 1.")
+    # Validate parameters of the experiment are appropriate
+    check_experiment_inputs.validate_experiment_parameter_between_0_and_1(significance_level, 'significance_level')
+    check_experiment_inputs.validate_measurement_type_is_valid(measurement_type)
 
     # Perform t-test for means
     if measurement_type == 'mean':
@@ -62,13 +72,8 @@ def parametric_significance_test_on_raw_scores(
     # Perform z-test for proportions
     elif measurement_type == 'proportion':
 
-        # Check values are encoded as 1 for occurrence of event, and 0 for non-event
-        binary_values = {0, 1}
-
-        if set(group_1_observations) != binary_values or set(group_2_observations) != binary_values:
-            raise ValueError(
-                'When testing proportions, values must be marked as 1 to represent the event, and 0 for non-event'
-            )
+        for observations in [group_1_observations, group_2_observations]:
+            check_experiment_inputs.validate_binary_events_are_represented_with_0_or_1(observations)
 
         test_statistic, p_value = weightstats.ztest(
             x1=group_1_observations,
@@ -76,18 +81,35 @@ def parametric_significance_test_on_raw_scores(
             alternative=alternative_hypothesis
         )
 
-    else:
-        raise ValueError('measurement_type must be "proportion" or "mean".')
-
     # Display interpretation if requested
     if verbose:
-        if p_value < significance_level:
-            print('\nSIGNIFICANT DIFFERENCE between the two groups!\n')
-            print(f'Test returns a p-value of {p_value:.3f},'
-                  f' which means we CAN reject the null at a significance level of {significance_level * 100:.1f}%')
-        else:
-            print('\nNO SIGNIFICANT DIFFERENCE between the two groups.\n')
-            print(f'Test returns a p-value of {p_value:.3f},'
-                  f' which means we CANNOT reject the null at a significance level of {significance_level * 100:.1f}%')
+        _print_interpretation_of_p_value(p_value, significance_level)
 
     return p_value, test_statistic
+
+
+def _print_interpretation_of_p_value(p_value: float, significance_level: float) -> None:
+    """
+    Prints message for the user indicating whether the differences observed in the experiment can be deemed significant.
+
+    Parameters
+    ----------
+    p_value : float
+        Assuming the null hypothesis is true, the probability of observing a result as extreme or more extreme
+        than the one actually recorded.
+    significance_level : float in interval (0,1)
+        The significance level/probability of a type I error for the experiment.
+    """
+
+    if p_value < significance_level:
+        print(
+            f'\nSIGNIFICANT DIFFERENCE between the two groups!\n'
+            f'Test returns a p-value of {p_value:.3f}, which means we CAN reject the null at a significance level of '
+            f'{significance_level * 100:.1f}%'
+        )
+    else:
+        print(
+            f'\nNO SIGNIFICANT DIFFERENCE between the two groups.\n'
+            f'Test returns a p-value of {p_value:.3f}, which means we CANNOT reject the null at a significance level'
+            f'of {significance_level * 100:.1f}%'
+        )
