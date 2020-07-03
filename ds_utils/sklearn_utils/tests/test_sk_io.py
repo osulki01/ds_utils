@@ -94,7 +94,7 @@ def test_save_pickled_sklearn_object_and_version_handles_existing_file(fs, sklea
     fs.create_file(pre_existing_pathname)
 
     # Check that exception is raised if file already exists and user did not specify it should be over-written
-    with pytest.raises(FileExistsError):
+    with pytest.raises(FileExistsError, match=r'File .* already exists.*'):
         sk_io.save_pickled_sklearn_object_and_version(
             sklearn_object=sklearn_scaler_object,
             filename_or_path=pre_existing_pathname,
@@ -126,7 +126,10 @@ def test__warn_if_loaded_sklearn_object_version_different_to_current_version():
 
     # Warning should be raised if the version associated with the loaded sklearn object is different to the current
     # sklearn version
-    with pytest.warns(UserWarning):
+    with pytest.warns(
+            UserWarning,
+            match='The version of sklearn used when saving the original sklearn object is different.*'
+    ):
         sk_io._warn_if_loaded_sklearn_object_version_different_to_current_version(
             loaded_sklearn_object_version=mock_different_sklearn_version,
             filename_or_path=mock_filename_or_path,
@@ -135,7 +138,7 @@ def test__warn_if_loaded_sklearn_object_version_different_to_current_version():
     # Exception should be raised if the version is not a string, and likely was saved incorrectly
     mock_incorrect_version_type = 999
 
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match='Version of sklearn associated with loaded object is not a string.*'):
         sk_io._warn_if_loaded_sklearn_object_version_different_to_current_version(
             loaded_sklearn_object_version=mock_incorrect_version_type,
             filename_or_path=mock_filename_or_path
