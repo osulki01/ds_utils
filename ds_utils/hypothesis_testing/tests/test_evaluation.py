@@ -30,8 +30,7 @@ def test_parametric_significance_test_on_raw_observations_mean():
         group_1_observations=group_1_observations,
         group_2_observations=group_2_observations,
         alternative_hypothesis=alternative_hypothesis,
-        measurement_type='mean',
-        verbose=False
+        measurement_type='mean'
     )
 
     assert actual_test_statistic == expected_test_statistic
@@ -58,8 +57,7 @@ def test_parametric_significance_test_on_raw_observations_proportion():
         group_1_observations=group_1_observations,
         group_2_observations=group_2_observations,
         alternative_hypothesis=alternative_hypothesis,
-        measurement_type='proportion',
-        verbose=False
+        measurement_type='proportion'
     )
 
     assert actual_test_statistic == expected_test_statistic
@@ -112,15 +110,3 @@ def test__print_interpretation_of_p_value(capsys):
     expected_interpretation_when_not_significant = expected_interpretation_when_not_significant.replace('\n', '')
 
     assert actual_interpretation_when_not_significant == expected_interpretation_when_not_significant
-
-# def test_parametric_significance_test():
-#     """."""
-#
-#     evaluation.parametric_significance_test(
-#         group_1_observations=,
-#         group_2_observations=,
-#         alternative_hypothesis=,
-#         significance_level=,
-#         verbose=,
-#     )
-#
