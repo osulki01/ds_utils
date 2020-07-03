@@ -216,17 +216,34 @@ Testing For Significance
 When your experiment has run and you have some results to analyse, use
 :py:mod:`ds_utils.hypothesis_testing.evaluation` to test for significance.
 
+In cases where you have values for each observation in the experiment,
+:py:func:`ds_utils.hypothesis_testing.evaluation.parametric_significance_test_on_raw_observations` can be used.
+
 
 Module Overview
 ---------------
 
 .. autosummary::
 
+   ds_utils.hypothesis_testing.check_experiment_inputs
+   ds_utils.hypothesis_testing.evaluation
    ds_utils.hypothesis_testing.set_up_experiment
 
 
 Submodules
 ----------
+
+check_experiment_inputs
+^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: ds_utils.hypothesis_testing.check_experiment_inputs
+   :members:
+
+evaluation
+^^^^^^^^^^
+
+.. automodule:: ds_utils.hypothesis_testing.evaluation
+   :members:
 
 set_up_experiment
 ^^^^^^^^^^^^^^^^^

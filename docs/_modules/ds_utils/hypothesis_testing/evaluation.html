@@ -1,0 +1,192 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>ds_utils.hypothesis_testing.evaluation &#8212; ds_utils 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">ds_utils 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for ds_utils.hypothesis_testing.evaluation</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Analyse the outcome of an experiment and test for significance.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># Standard library imports</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
+
+<span class="c1"># Third party imports</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">statsmodels.stats</span> <span class="kn">import</span> <span class="n">weightstats</span>
+
+<span class="c1"># Local application imports</span>
+<span class="kn">from</span> <span class="nn">ds_utils.hypothesis_testing</span> <span class="kn">import</span> <span class="n">check_experiment_inputs</span>
+
+
+<div class="viewcode-block" id="parametric_significance_test_on_raw_observations"><a class="viewcode-back" href="../../../modules/hypothesis_testing.html#ds_utils.hypothesis_testing.evaluation.parametric_significance_test_on_raw_observations">[docs]</a><span class="k">def</span> <span class="nf">parametric_significance_test_on_raw_observations</span><span class="p">(</span>
+        <span class="n">group_1_observations</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">group_2_observations</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">measurement_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">alternative_hypothesis</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;two-sided&#39;</span><span class="p">,</span>
+        <span class="n">significance_level</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Tests for a significant difference between the observations recorded for two experimental groups.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    group_1_observations : numpy array_like</span>
+<span class="sd">        Observations for specific group in the experiment.</span>
+<span class="sd">    group_2_observations : numpy array_like</span>
+<span class="sd">        Observations for other group in the experiment which group_1 will be compared against.</span>
+<span class="sd">    measurement_type : str &#39;proportion&#39;, &#39;mean&#39;</span>
+<span class="sd">        Whether the metric is a proportion (e.g. % conversion rate) or mean (e.g. average spend).</span>
+<span class="sd">    alternative_hypothesis : str &#39;two-sided&#39; (default), &#39;larger&#39;, &#39;smaller&#39;</span>
+<span class="sd">        Whether you are running a &#39;two-sided&#39; test, or checking whether the new metric will be &#39;smaller&#39; or &#39;larger&#39;.</span>
+<span class="sd">        &#39;two-sided&#39; is generally recommended because we do not know in advance whether the change in our experiment</span>
+<span class="sd">        will yield positive or negative results.</span>
+<span class="sd">    significance_level : float in interval (0,1) (default is 0.05)</span>
+<span class="sd">        The significance level/probability of a type I error, i.e. likelihood of a false positive (incorrectly rejecting</span>
+<span class="sd">        the Null Hypothesis when it is in fact true). Default value of 5% is commonly used but you should consider what</span>
+<span class="sd">        is appropriate given the business context.</span>
+<span class="sd">    verbose : bool</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Tuple[float, float]</span>
+<span class="sd">        (1st value) p-value, i.e. the probability of obtaining results as extreme as the observed result.</span>
+<span class="sd">        (2nd value) test-statistic, which applies to z-test when measuring proportions, and t-test for means.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If `significance_level` does not adhere to 0 &lt; significance_level &lt; 1.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If the experiment metric is a proportion, but the individual observations are not all represented as 0 or 1.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Validate parameters of the experiment are appropriate</span>
+    <span class="n">check_experiment_inputs</span><span class="o">.</span><span class="n">validate_experiment_parameter_between_0_and_1</span><span class="p">(</span><span class="n">significance_level</span><span class="p">,</span> <span class="s1">&#39;significance_level&#39;</span><span class="p">)</span>
+    <span class="n">check_experiment_inputs</span><span class="o">.</span><span class="n">validate_measurement_type_is_valid</span><span class="p">(</span><span class="n">measurement_type</span><span class="p">)</span>
+
+    <span class="c1"># Perform t-test for means</span>
+    <span class="k">if</span> <span class="n">measurement_type</span> <span class="o">==</span> <span class="s1">&#39;mean&#39;</span><span class="p">:</span>
+
+        <span class="n">test_statistic</span><span class="p">,</span> <span class="n">p_value</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">weightstats</span><span class="o">.</span><span class="n">ttest_ind</span><span class="p">(</span>
+            <span class="n">x1</span><span class="o">=</span><span class="n">group_1_observations</span><span class="p">,</span>
+            <span class="n">x2</span><span class="o">=</span><span class="n">group_2_observations</span><span class="p">,</span>
+            <span class="n">alternative</span><span class="o">=</span><span class="n">alternative_hypothesis</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Perform z-test for proportions</span>
+    <span class="k">elif</span> <span class="n">measurement_type</span> <span class="o">==</span> <span class="s1">&#39;proportion&#39;</span><span class="p">:</span>
+
+        <span class="k">for</span> <span class="n">observations</span> <span class="ow">in</span> <span class="p">[</span><span class="n">group_1_observations</span><span class="p">,</span> <span class="n">group_2_observations</span><span class="p">]:</span>
+            <span class="n">check_experiment_inputs</span><span class="o">.</span><span class="n">validate_binary_events_are_represented_with_0_or_1</span><span class="p">(</span><span class="n">observations</span><span class="p">)</span>
+
+        <span class="n">test_statistic</span><span class="p">,</span> <span class="n">p_value</span> <span class="o">=</span> <span class="n">weightstats</span><span class="o">.</span><span class="n">ztest</span><span class="p">(</span>
+            <span class="n">x1</span><span class="o">=</span><span class="n">group_1_observations</span><span class="p">,</span>
+            <span class="n">x2</span><span class="o">=</span><span class="n">group_2_observations</span><span class="p">,</span>
+            <span class="n">alternative</span><span class="o">=</span><span class="n">alternative_hypothesis</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Display interpretation if requested</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="n">_print_interpretation_of_p_value</span><span class="p">(</span><span class="n">p_value</span><span class="p">,</span> <span class="n">significance_level</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">p_value</span><span class="p">,</span> <span class="n">test_statistic</span></div>
+
+
+<span class="k">def</span> <span class="nf">_print_interpretation_of_p_value</span><span class="p">(</span><span class="n">p_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">significance_level</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Prints message for the user indicating whether the differences observed in the experiment can be deemed significant.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    p_value : float</span>
+<span class="sd">        Assuming the null hypothesis is true, the probability of observing a result as extreme or more extreme</span>
+<span class="sd">        than the one actually recorded.</span>
+<span class="sd">    significance_level : float in interval (0,1)</span>
+<span class="sd">        The significance level/probability of a type I error for the experiment.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">p_value</span> <span class="o">&lt;</span> <span class="n">significance_level</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">SIGNIFICANT DIFFERENCE between the two groups!</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;Test returns a p-value of </span><span class="si">{</span><span class="n">p_value</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1">, which means we CAN reject the null at a significance level of &#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">significance_level</span> <span class="o">*</span> <span class="mi">100</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1">%&#39;</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">NO SIGNIFICANT DIFFERENCE between the two groups.</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;Test returns a p-value of </span><span class="si">{</span><span class="n">p_value</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1">, which means we CANNOT reject the null at a significance level&#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;of </span><span class="si">{</span><span class="n">significance_level</span> <span class="o">*</span> <span class="mi">100</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1">%&#39;</span>
+        <span class="p">)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">ds_utils 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Kieran O&#39;Sullivan.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+    </div>
+  </body>
+</html>

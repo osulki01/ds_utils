@@ -40,7 +40,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="c1"># Standard library imports</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
 
 <span class="c1"># Third party imports</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -48,110 +48,8 @@
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">statsmodels.stats</span> <span class="kn">import</span> <span class="n">power</span> <span class="k">as</span> <span class="n">stats_power</span>
 
-
-<div class="viewcode-block" id="calculate_required_sample_size"><a class="viewcode-back" href="../../../modules/hypothesis_testing.html#ds_utils.hypothesis_testing.set_up_experiment.calculate_required_sample_size">[docs]</a><span class="k">def</span> <span class="nf">calculate_required_sample_size</span><span class="p">(</span>
-        <span class="n">baseline_metric_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-        <span class="n">new_metric_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-        <span class="n">measurement_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="o">*</span><span class="p">,</span>
-        <span class="n">alternative_hypothesis</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;two-sided&#39;</span><span class="p">,</span>
-        <span class="n">power</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.8</span><span class="p">,</span>
-        <span class="n">significance_level</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
-        <span class="n">standard_deviation</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Calculate the required sample size for an experiment given a certain degree of change that we want to confidently</span>
-<span class="sd">    detect.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    baseline_metric_value : float</span>
-<span class="sd">        Baseline value that reflects the current metric we are trying to change e.g. the existing retention rate.</span>
-<span class="sd">    new_metric_value : float</span>
-<span class="sd">        The smallest meaningful effect that we wish to be able to detect i.e. at what point do the results become</span>
-<span class="sd">        commercially interesting e.g. 85% retention vs 80% baseline may be the smallest shift which yield a financial</span>
-<span class="sd">        benefit that makes the project worth implementing.</span>
-<span class="sd">    measurement_type : str (must be &#39;proportion&#39; or &#39;mean&#39;)</span>
-<span class="sd">        Whether the metric is a proportion (e.g. % conversion rate) or mean (e.g. average spend).</span>
-<span class="sd">    alternative_hypothesis : str &#39;two-sided&#39; (default), &#39;larger&#39;, &#39;smaller&#39;</span>
-<span class="sd">        Whether you are running a &#39;two-sided&#39; test, or checking whether the new metric will be &#39;smaller&#39; or &#39;larger&#39;.</span>
-<span class="sd">        &#39;two-sided&#39; is generally recommended because we do not know in advance whether the change in our experiment</span>
-<span class="sd">        will yield positive or negative results.</span>
-<span class="sd">    power : float in interval (0,1) (default is 0.8)</span>
-<span class="sd">        Probability that the test correctly rejects the Null Hypothesis if the Alternative Hypothesis is true</span>
-<span class="sd">        i.e. likelihood of detecting a shift when it is genuine (one minus the probability of a type II error).</span>
-<span class="sd">        Default value of 80% is commonly used but you should consider what is appropriate given the business context.</span>
-<span class="sd">    significance_level : float in interval (0,1) (default is 0.05)</span>
-<span class="sd">        The significance level/probability of a type I error, i.e. likelihood of a false positive (incorrectly rejecting</span>
-<span class="sd">        the Null Hypothesis when it is in fact true). Default value of 5% is commonly used but you should consider what</span>
-<span class="sd">        is appropriate given the business context.</span>
-<span class="sd">    standard_deviation : float (default is none)</span>
-<span class="sd">        Standard deviation for the metric being tested. Only needs to be set if `measurement_type` is &#39;mean&#39;.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    int</span>
-<span class="sd">        Minimum sample size required to satisfy experiment criteria.</span>
-
-<span class="sd">    Raises</span>
-<span class="sd">    ----------</span>
-<span class="sd">    TypeError</span>
-<span class="sd">        If `measurement_type` is &#39;mean&#39; but no `standard_deviation` provided.</span>
-<span class="sd">    ValueError</span>
-<span class="sd">        If `significance_level` or `power` not in range (0,1).</span>
-<span class="sd">    ValueError</span>
-<span class="sd">        If `measurement_type` not in [&#39;proportion&#39;, &#39;mean&#39;].</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="c1"># Errors in arguments provided</span>
-    <span class="k">if</span> <span class="n">measurement_type</span> <span class="o">==</span> <span class="s1">&#39;mean&#39;</span> <span class="ow">and</span> <span class="n">standard_deviation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;When measuring a mean for your test, you must also specify its existing `standard_deviation`.&quot;</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">significance_level</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;significance_level must be greater than 0 but less than 1.&quot;</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">power</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;power must be greater than 0 but less than 1.&quot;</span><span class="p">)</span>
-
-    <span class="c1"># Calculate sample size required if measuring difference between two proportions and will therefore use a z-test</span>
-    <span class="k">if</span> <span class="n">measurement_type</span> <span class="o">==</span> <span class="s1">&#39;proportion&#39;</span><span class="p">:</span>
-
-        <span class="c1"># How big is the shift we want to capture</span>
-        <span class="n">effect_size</span> <span class="o">=</span> <span class="n">_calculate_effect_size_proportions</span><span class="p">(</span>
-            <span class="n">baseline_proportion</span><span class="o">=</span><span class="n">baseline_metric_value</span><span class="p">,</span>
-            <span class="n">new_proportion</span><span class="o">=</span><span class="n">new_metric_value</span>
-        <span class="p">)</span>
-
-        <span class="c1"># Given our experiment parameters, what sample size is needed</span>
-        <span class="n">required_sample_size</span> <span class="o">=</span> <span class="n">stats_power</span><span class="o">.</span><span class="n">zt_ind_solve_power</span><span class="p">(</span>
-            <span class="n">effect_size</span><span class="o">=</span><span class="n">effect_size</span><span class="p">,</span>
-            <span class="n">alpha</span><span class="o">=</span><span class="n">significance_level</span><span class="p">,</span>
-            <span class="n">power</span><span class="o">=</span><span class="n">power</span><span class="p">,</span>
-            <span class="n">alternative</span><span class="o">=</span><span class="n">alternative_hypothesis</span><span class="p">,</span>
-        <span class="p">)</span>
-
-    <span class="c1"># Calculate sample size required if measuring difference between two means and will therefore use a t-test</span>
-    <span class="k">elif</span> <span class="n">measurement_type</span> <span class="o">==</span> <span class="s1">&#39;mean&#39;</span><span class="p">:</span>
-
-        <span class="c1"># How big is the shift we want to capture</span>
-        <span class="n">effect_size</span> <span class="o">=</span> <span class="n">_calculate_effect_size_means</span><span class="p">(</span>
-            <span class="n">baseline_mean</span><span class="o">=</span><span class="n">baseline_metric_value</span><span class="p">,</span>
-            <span class="n">new_mean</span><span class="o">=</span><span class="n">new_metric_value</span><span class="p">,</span>
-            <span class="n">standard_deviation</span><span class="o">=</span><span class="n">standard_deviation</span>
-        <span class="p">)</span>
-
-        <span class="c1"># Given our experiment parameters, what sample size is needed</span>
-        <span class="n">required_sample_size</span> <span class="o">=</span> <span class="n">stats_power</span><span class="o">.</span><span class="n">tt_ind_solve_power</span><span class="p">(</span>
-            <span class="n">effect_size</span><span class="o">=</span><span class="n">effect_size</span><span class="p">,</span>
-            <span class="n">alpha</span><span class="o">=</span><span class="n">significance_level</span><span class="p">,</span>
-            <span class="n">power</span><span class="o">=</span><span class="n">power</span><span class="p">,</span>
-            <span class="n">alternative</span><span class="o">=</span><span class="n">alternative_hypothesis</span><span class="p">,</span>
-        <span class="p">)</span>
-
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;measurement_type must be &quot;proportion&quot; or &quot;mean&quot;.&#39;</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">required_sample_size</span><span class="p">)</span></div>
+<span class="c1"># Internal modules</span>
+<span class="kn">from</span> <span class="nn">ds_utils.hypothesis_testing</span> <span class="kn">import</span> <span class="n">check_experiment_inputs</span>
 
 
 <span class="k">def</span> <span class="nf">_calculate_effect_size_means</span><span class="p">(</span><span class="n">baseline_mean</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">new_mean</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">standard_deviation</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -223,6 +121,104 @@
     <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="n">double_arcsin_sqrt_new_prob</span> <span class="o">-</span> <span class="n">double_arcsin_sqrt_baseline</span><span class="p">)</span>
 
 
+<div class="viewcode-block" id="calculate_required_sample_size"><a class="viewcode-back" href="../../../modules/hypothesis_testing.html#ds_utils.hypothesis_testing.set_up_experiment.calculate_required_sample_size">[docs]</a><span class="k">def</span> <span class="nf">calculate_required_sample_size</span><span class="p">(</span>
+        <span class="n">baseline_metric_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">new_metric_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">measurement_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">alternative_hypothesis</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;two-sided&#39;</span><span class="p">,</span>
+        <span class="n">power</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.8</span><span class="p">,</span>
+        <span class="n">significance_level</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
+        <span class="n">standard_deviation</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the required sample size for an experiment given a certain degree of change that we want to confidently</span>
+<span class="sd">    detect.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    baseline_metric_value : float</span>
+<span class="sd">        Baseline value that reflects the current metric we are trying to change e.g. the existing retention rate.</span>
+<span class="sd">    new_metric_value : float</span>
+<span class="sd">        The smallest meaningful effect that we wish to be able to detect i.e. at what point do the results become</span>
+<span class="sd">        commercially interesting e.g. 85% retention vs 80% baseline may be the smallest shift which yield a financial</span>
+<span class="sd">        benefit that makes the project worth implementing.</span>
+<span class="sd">    measurement_type : str (must be &#39;proportion&#39; or &#39;mean&#39;)</span>
+<span class="sd">        Whether the metric is a proportion (e.g. % conversion rate) or mean (e.g. average spend).</span>
+<span class="sd">    alternative_hypothesis : str &#39;two-sided&#39; (default), &#39;larger&#39;, &#39;smaller&#39;</span>
+<span class="sd">        Whether you are running a &#39;two-sided&#39; test, or checking whether the new metric will be &#39;smaller&#39; or &#39;larger&#39;.</span>
+<span class="sd">        &#39;two-sided&#39; is generally recommended because we do not know in advance whether the change in our experiment</span>
+<span class="sd">        will yield positive or negative results.</span>
+<span class="sd">    power : float in interval (0,1) (default is 0.8)</span>
+<span class="sd">        Probability that the test correctly rejects the Null Hypothesis if the Alternative Hypothesis is true</span>
+<span class="sd">        i.e. likelihood of detecting a shift when it is genuine (one minus the probability of a type II error).</span>
+<span class="sd">        Default value of 80% is commonly used but you should consider what is appropriate given the business context.</span>
+<span class="sd">    significance_level : float in interval (0,1) (default is 0.05)</span>
+<span class="sd">        The significance level/probability of a type I error, i.e. likelihood of a false positive (incorrectly rejecting</span>
+<span class="sd">        the Null Hypothesis when it is in fact true). Default value of 5% is commonly used but you should consider what</span>
+<span class="sd">        is appropriate given the business context.</span>
+<span class="sd">    standard_deviation : float (default is none)</span>
+<span class="sd">        Standard deviation for the metric being tested. Only needs to be set if `measurement_type` is &#39;mean&#39;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    int</span>
+<span class="sd">        Minimum sample size required to satisfy experiment criteria.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ----------</span>
+<span class="sd">    TypeError</span>
+<span class="sd">        If `measurement_type` is &#39;mean&#39; but no `standard_deviation` provided.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If `significance_level` or `power` not in range (0,1).</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If `measurement_type` not in [&#39;proportion&#39;, &#39;mean&#39;].</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Validate that experiment&#39;s parameters are appropriate</span>
+    <span class="k">if</span> <span class="n">measurement_type</span> <span class="o">==</span> <span class="s1">&#39;mean&#39;</span> <span class="ow">and</span> <span class="n">standard_deviation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;When measuring a mean for your test, you must also specify its existing `standard_deviation`.&quot;</span><span class="p">)</span>
+
+    <span class="n">check_experiment_inputs</span><span class="o">.</span><span class="n">validate_experiment_parameter_between_0_and_1</span><span class="p">(</span><span class="n">significance_level</span><span class="p">,</span> <span class="s1">&#39;significance_level&#39;</span><span class="p">)</span>
+    <span class="n">check_experiment_inputs</span><span class="o">.</span><span class="n">validate_experiment_parameter_between_0_and_1</span><span class="p">(</span><span class="n">power</span><span class="p">,</span> <span class="s1">&#39;power&#39;</span><span class="p">)</span>
+    <span class="n">check_experiment_inputs</span><span class="o">.</span><span class="n">validate_measurement_type_is_valid</span><span class="p">(</span><span class="n">measurement_type</span><span class="p">)</span>
+
+    <span class="c1"># Calculate sample size required if measuring difference between two proportions and will therefore use a z-test</span>
+    <span class="k">if</span> <span class="n">measurement_type</span> <span class="o">==</span> <span class="s1">&#39;proportion&#39;</span><span class="p">:</span>
+
+        <span class="c1"># How big is the shift we want to capture</span>
+        <span class="n">effect_size</span> <span class="o">=</span> <span class="n">_calculate_effect_size_proportions</span><span class="p">(</span>
+            <span class="n">baseline_proportion</span><span class="o">=</span><span class="n">baseline_metric_value</span><span class="p">,</span>
+            <span class="n">new_proportion</span><span class="o">=</span><span class="n">new_metric_value</span>
+        <span class="p">)</span>
+
+        <span class="n">required_sample_size</span> <span class="o">=</span> <span class="n">stats_power</span><span class="o">.</span><span class="n">zt_ind_solve_power</span><span class="p">(</span>
+            <span class="n">effect_size</span><span class="o">=</span><span class="n">effect_size</span><span class="p">,</span>
+            <span class="n">alpha</span><span class="o">=</span><span class="n">significance_level</span><span class="p">,</span>
+            <span class="n">power</span><span class="o">=</span><span class="n">power</span><span class="p">,</span>
+            <span class="n">alternative</span><span class="o">=</span><span class="n">alternative_hypothesis</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Calculate sample size required if measuring difference between two means and will therefore use a t-test</span>
+    <span class="k">elif</span> <span class="n">measurement_type</span> <span class="o">==</span> <span class="s1">&#39;mean&#39;</span><span class="p">:</span>
+
+        <span class="c1"># How big is the shift we want to capture</span>
+        <span class="n">effect_size</span> <span class="o">=</span> <span class="n">_calculate_effect_size_means</span><span class="p">(</span>
+            <span class="n">baseline_mean</span><span class="o">=</span><span class="n">baseline_metric_value</span><span class="p">,</span>
+            <span class="n">new_mean</span><span class="o">=</span><span class="n">new_metric_value</span><span class="p">,</span>
+            <span class="n">standard_deviation</span><span class="o">=</span><span class="n">standard_deviation</span>
+        <span class="p">)</span>
+
+        <span class="n">required_sample_size</span> <span class="o">=</span> <span class="n">stats_power</span><span class="o">.</span><span class="n">tt_ind_solve_power</span><span class="p">(</span>
+            <span class="n">effect_size</span><span class="o">=</span><span class="n">effect_size</span><span class="p">,</span>
+            <span class="n">alpha</span><span class="o">=</span><span class="n">significance_level</span><span class="p">,</span>
+            <span class="n">power</span><span class="o">=</span><span class="n">power</span><span class="p">,</span>
+            <span class="n">alternative</span><span class="o">=</span><span class="n">alternative_hypothesis</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">required_sample_size</span><span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="create_sample_groups"><a class="viewcode-back" href="../../../modules/hypothesis_testing.html#ds_utils.hypothesis_testing.set_up_experiment.create_sample_groups">[docs]</a><span class="k">def</span> <span class="nf">create_sample_groups</span><span class="p">(</span><span class="n">original_population</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">sample_groups</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Randomly assign records from a population dataset to distinct sample groups.</span>
@@ -281,8 +277,12 @@
 
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># Check how user has specified sample sizes</span>
-        <span class="n">sample_size_type</span> <span class="o">=</span> <span class="n">_check_if_sample_sizes_are_proportions_or_absolute</span><span class="p">(</span><span class="n">sample_groups</span><span class="p">)</span>
-        <span class="n">_check_sample_size_values_are_appropriate</span><span class="p">(</span><span class="n">original_population</span><span class="p">,</span> <span class="n">sample_groups</span><span class="p">,</span> <span class="n">sample_size_type</span><span class="p">)</span>
+        <span class="n">sample_size_type</span> <span class="o">=</span> <span class="n">check_experiment_inputs</span><span class="o">.</span><span class="n">check_if_sample_sizes_are_proportions_or_absolute</span><span class="p">(</span><span class="n">sample_groups</span><span class="p">)</span>
+        <span class="n">check_experiment_inputs</span><span class="o">.</span><span class="n">validate_sample_size_values_are_appropriate</span><span class="p">(</span>
+            <span class="n">original_population</span><span class="o">=</span><span class="n">original_population</span><span class="p">,</span>
+            <span class="n">sample_groups</span><span class="o">=</span><span class="n">sample_groups</span><span class="p">,</span>
+            <span class="n">size_type</span><span class="o">=</span><span class="n">sample_size_type</span>
+        <span class="p">)</span>
 
         <span class="c1"># Work through the randomly ordered row indices and assign an appropriate size to each sample group</span>
         <span class="n">start_index</span> <span class="o">=</span> <span class="mi">0</span>
@@ -303,93 +303,6 @@
 
     <span class="c1"># Return all of the records that were assigned to a sample group</span>
     <span class="k">return</span> <span class="n">samples_from_population</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">~</span><span class="n">samples_from_population</span><span class="p">[</span><span class="s1">&#39;sample_group&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">(),</span> <span class="p">:]</span></div>
-
-
-<span class="k">def</span> <span class="nf">_check_if_sample_sizes_are_proportions_or_absolute</span><span class="p">(</span><span class="n">sample_groups</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Identifies whether the user has specified the size of each sample group as a proportion of the population, or their</span>
-<span class="sd">    absolute size in terms of number of records.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    sample_groups : dict[str, float] or dict[str, int]</span>
-<span class="sd">        Keys: The names of each sample group</span>
-<span class="sd">        Values: How big they should be.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    str</span>
-<span class="sd">        Whether the sizes reflect &#39;proportion&#39; or their &#39;absolute&#39; size.</span>
-
-<span class="sd">    Raises</span>
-<span class="sd">    ----------</span>
-<span class="sd">    ValueError</span>
-<span class="sd">        If the values provided for the sizes of each sample group are not all floats (proportions), or all integers</span>
-<span class="sd">        (absolute sizes).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="c1"># Check how the sizes of each sample group have been provided</span>
-    <span class="n">user_provided_types</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-
-    <span class="k">for</span> <span class="n">group_size</span> <span class="ow">in</span> <span class="n">sample_groups</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-        <span class="n">user_provided_types</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">group_size</span><span class="p">))</span>
-
-    <span class="c1"># When taking proportions of the overall population, every value should be a float</span>
-    <span class="k">if</span> <span class="n">user_provided_types</span> <span class="o">==</span> <span class="p">{</span><span class="nb">float</span><span class="p">}:</span>
-        <span class="k">return</span> <span class="s1">&#39;proportion&#39;</span>
-    <span class="c1"># When using specific numbers for each group, every value should be an integer</span>
-    <span class="k">elif</span> <span class="n">user_provided_types</span> <span class="o">==</span> <span class="p">{</span><span class="nb">int</span><span class="p">}:</span>
-        <span class="k">return</span> <span class="s1">&#39;absolute&#39;</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s1">&#39;The sizes provided as values for sample_groups must all be proportions (e.g. 0.8, 0.1, 0.1) or &#39;</span>
-            <span class="s1">&#39;absolute sizes (e.g. 65, 40, 25).&#39;</span>
-        <span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">_check_sample_size_values_are_appropriate</span><span class="p">(</span>
-        <span class="n">original_population</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
-        <span class="n">sample_groups</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]],</span>
-        <span class="n">size_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Checks that the values provided for the size of each sample group, be they proportions or absolute sizes, are valid.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    original_population : pd.DataFrame</span>
-<span class="sd">        The total dataset from which samples will be drawn.</span>
-<span class="sd">    sample_groups : dict[str, float] or dict[str, int]</span>
-<span class="sd">        Keys: The names of each sample group</span>
-<span class="sd">        Values: How big they should be.</span>
-<span class="sd">    size_type : str &#39;proportion&#39;, &#39;absolute&#39;</span>
-<span class="sd">        Whether the sizes reflect &#39;proportion&#39; or their &#39;absolute&#39; size.</span>
-
-<span class="sd">    Raises</span>
-<span class="sd">    -------</span>
-<span class="sd">    ValueError</span>
-<span class="sd">        If the proportions do not adhere to 0 &lt; proportion &lt; 1.</span>
-<span class="sd">    ValueError</span>
-<span class="sd">        If the proportions sum up to more than 1.</span>
-<span class="sd">    ValueError</span>
-<span class="sd">        If the absolute sizes sum up to more than the size of the original population.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">if</span> <span class="n">size_type</span> <span class="o">==</span> <span class="s1">&#39;proportion&#39;</span><span class="p">:</span>
-
-        <span class="k">for</span> <span class="n">proportion_size</span> <span class="ow">in</span> <span class="n">sample_groups</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">proportion_size</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Proportions should all be 0 &lt; proportion &lt; 1.&quot;</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">sample_groups</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Proportions should not exceed 1 in total.&quot;</span><span class="p">)</span>
-
-    <span class="k">elif</span> <span class="n">size_type</span> <span class="o">==</span> <span class="s1">&#39;absolute&#39;</span><span class="p">:</span>
-
-        <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">sample_groups</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="o">&gt;</span> <span class="n">original_population</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;The sum of all sample sizes should not exceed that of the original population that you are sampling.&quot;</span>
-            <span class="p">)</span>
 </pre></div>
 
           </div>

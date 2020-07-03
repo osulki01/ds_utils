@@ -43,6 +43,9 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', 'setup.py', 'tests']
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
 
+# Whether to show the full path to each module
+add_module_names = False
+
 
 # -- Options for HTML output -------------------------------------------------
 
