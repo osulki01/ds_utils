@@ -9,6 +9,7 @@ pylint = "*"
 pyfakefs = "*"
 pytest = "*"
 sphinx = "*"
+sphinx_rtd_theme = "*"
 
 [packages]
 pandas = "*"
