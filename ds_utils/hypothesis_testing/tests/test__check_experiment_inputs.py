@@ -8,7 +8,7 @@ import pandas as pd
 import pytest
 
 # Local application imports
-from ds_utils.hypothesis_testing import check_experiment_inputs
+from ds_utils.hypothesis_testing import _check_experiment_inputs
 
 
 @pytest.mark.parametrize(
@@ -31,21 +31,21 @@ def test_check_if_sample_sizes_are_proportions_or_absolute_flags_inconsistent_si
             ValueError,
             match='The sizes provided as values for `sample_groups` must all be proportions .* or absolute sizes .*'
     ):
-        check_experiment_inputs.check_if_sample_sizes_are_proportions_or_absolute(inconsistent_sample_size_types)
+        _check_experiment_inputs.check_if_sample_sizes_are_proportions_or_absolute(inconsistent_sample_size_types)
 
 
 def test_check_if_sample_sizes_are_proportions_or_absolute_recognises_absolute_sizes():
     """Recognise that integers represent absolute number of records to be assigned to each sample group."""
 
     sample_groups = {'Group_1': 50, 'Group_2': 25, 'Group_3': 25}
-    assert check_experiment_inputs.check_if_sample_sizes_are_proportions_or_absolute(sample_groups) == 'absolute'
+    assert _check_experiment_inputs.check_if_sample_sizes_are_proportions_or_absolute(sample_groups) == 'absolute'
 
 
 def test_check_if_sample_sizes_are_proportions_or_absolute_recognises_proportions():
     """Recognise that floats represent proportions of the population to be assigned to each sample group."""
 
     sample_groups = {'Group_1': 0.5, 'Group_2': 0.25, 'Group_3': 0.25}
-    assert check_experiment_inputs.check_if_sample_sizes_are_proportions_or_absolute(sample_groups) == 'proportion'
+    assert _check_experiment_inputs.check_if_sample_sizes_are_proportions_or_absolute(sample_groups) == 'proportion'
 
 
 @pytest.mark.parametrize(
@@ -70,7 +70,7 @@ def test_validate_sample_size_values_are_appropriate(invalid_sample_sizes, size_
                                   r'(The sum of all sample sizes should not exceed that of the original population .*)'
 
     with pytest.raises(ValueError, match=expected_exception_messages):
-        check_experiment_inputs.validate_sample_size_values_are_appropriate(
+        _check_experiment_inputs.validate_sample_size_values_are_appropriate(
             original_population=original_population_10_rows,
             sample_groups=invalid_sample_sizes,
             size_type=size_type,
@@ -84,7 +84,7 @@ def test_validate_experiment_parameter_between_0_and_1(invalid_parameter_value):
     raised if condition 0 < parameter < 1 not met.
     """
     with pytest.raises(ValueError, match=".* must adhere to 0 < .* < 1."):
-        check_experiment_inputs.validate_experiment_parameter_between_0_and_1(
+        _check_experiment_inputs.validate_experiment_parameter_between_0_and_1(
             parameter_value=invalid_parameter_value,
             experiment_parameter='experiment_parameter'
         )
@@ -94,7 +94,7 @@ def test_validate_measurement_type_is_valid():
     """The experiment's metric should be measuring proportions or means."""
 
     with pytest.raises(ValueError, match="The experiment must be measuring a 'proportion' or 'mean'."):
-        check_experiment_inputs.validate_measurement_type_is_valid('invalid_measurement_type')
+        _check_experiment_inputs.validate_measurement_type_is_valid('invalid_measurement_type')
 
 
 def test_validate_binary_events_are_represented_with_0_or_1():
@@ -106,4 +106,4 @@ def test_validate_binary_events_are_represented_with_0_or_1():
             ValueError,
             match='When testing proportions, values must be marked as 1 to represent the event, and 0 for non-event.'
     ):
-        check_experiment_inputs.validate_binary_events_are_represented_with_0_or_1(invalid_proportions)
+        _check_experiment_inputs.validate_binary_events_are_represented_with_0_or_1(invalid_proportions)

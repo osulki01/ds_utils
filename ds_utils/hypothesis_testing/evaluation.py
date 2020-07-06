@@ -10,7 +10,7 @@ import numpy as np
 from statsmodels.stats import weightstats
 
 # Local application imports
-from ds_utils.hypothesis_testing import check_experiment_inputs
+from ds_utils.hypothesis_testing import _check_experiment_inputs
 
 
 def parametric_significance_test_on_raw_observations(
@@ -57,8 +57,8 @@ def parametric_significance_test_on_raw_observations(
     """
 
     # Validate parameters of the experiment are appropriate
-    check_experiment_inputs.validate_experiment_parameter_between_0_and_1(significance_level, 'significance_level')
-    check_experiment_inputs.validate_measurement_type_is_valid(measurement_type)
+    _check_experiment_inputs.validate_experiment_parameter_between_0_and_1(significance_level, 'significance_level')
+    _check_experiment_inputs.validate_measurement_type_is_valid(measurement_type)
 
     # Perform t-test for means
     if measurement_type == 'mean':
@@ -73,7 +73,7 @@ def parametric_significance_test_on_raw_observations(
     elif measurement_type == 'proportion':
 
         for observations in [group_1_observations, group_2_observations]:
-            check_experiment_inputs.validate_binary_events_are_represented_with_0_or_1(observations)
+            _check_experiment_inputs.validate_binary_events_are_represented_with_0_or_1(observations)
 
         test_statistic, p_value = weightstats.ztest(
             x1=group_1_observations,

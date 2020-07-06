@@ -12,7 +12,7 @@ import pandas as pd
 from statsmodels.stats import power as stats_power
 
 # Internal modules
-from ds_utils.hypothesis_testing import check_experiment_inputs
+from ds_utils.hypothesis_testing import _check_experiment_inputs
 
 
 def _calculate_effect_size_means(baseline_mean: float, new_mean: float, standard_deviation: float) -> float:
@@ -142,9 +142,9 @@ def calculate_required_sample_size(
     if measurement_type == 'mean' and standard_deviation is None:
         raise TypeError("When measuring a mean for your test, you must also specify its existing `standard_deviation`.")
 
-    check_experiment_inputs.validate_experiment_parameter_between_0_and_1(significance_level, 'significance_level')
-    check_experiment_inputs.validate_experiment_parameter_between_0_and_1(power, 'power')
-    check_experiment_inputs.validate_measurement_type_is_valid(measurement_type)
+    _check_experiment_inputs.validate_experiment_parameter_between_0_and_1(significance_level, 'significance_level')
+    _check_experiment_inputs.validate_experiment_parameter_between_0_and_1(power, 'power')
+    _check_experiment_inputs.validate_measurement_type_is_valid(measurement_type)
 
     # Calculate sample size required if measuring difference between two proportions and will therefore use a z-test
     if measurement_type == 'proportion':
@@ -240,8 +240,8 @@ def create_sample_groups(original_population: pd.DataFrame, sample_groups: Union
 
     else:
         # Check how user has specified sample sizes
-        sample_size_type = check_experiment_inputs.check_if_sample_sizes_are_proportions_or_absolute(sample_groups)
-        check_experiment_inputs.validate_sample_size_values_are_appropriate(
+        sample_size_type = _check_experiment_inputs.check_if_sample_sizes_are_proportions_or_absolute(sample_groups)
+        _check_experiment_inputs.validate_sample_size_values_are_appropriate(
             original_population=original_population,
             sample_groups=sample_groups,
             size_type=sample_size_type
