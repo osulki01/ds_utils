@@ -62,4 +62,4 @@ html_static_path = ['_static']
 # Ensure sidebar contents follows user as they scroll down
 html_theme_options = {'sticky_navigation': True}
 
-html_logo = 'logo.png'
+html_logo = 'logo.jpg'
