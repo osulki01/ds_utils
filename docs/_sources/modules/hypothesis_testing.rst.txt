@@ -225,19 +225,12 @@ Module Overview
 
 .. autosummary::
 
-   ds_utils.hypothesis_testing.check_experiment_inputs
    ds_utils.hypothesis_testing.evaluation
    ds_utils.hypothesis_testing.set_up_experiment
 
 
 Submodules
 ----------
-
-check_experiment_inputs
-^^^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: ds_utils.hypothesis_testing.check_experiment_inputs
-   :members:
 
 evaluation
 ^^^^^^^^^^

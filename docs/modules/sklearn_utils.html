@@ -55,7 +55,7 @@
 
           
             
-            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+            <img src="../_static/logo.jpg" class="logo" alt="Logo"/>
           
           </a>
 
@@ -204,7 +204,7 @@ Scikit-learn object, and the version of Scikit-learn currently running.</p>
 <p>In order to overwrite an existing file, you must request <code class="xref py py-data docutils literal notranslate"><span class="pre">overwrite</span></code> mode.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Attempt to overwrite an existing file</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">sk_io</span><span class="o">.</span><span class="n">save_pickled_sklearn_object_and_version</span><span class="p">(</span><span class="n">scaler</span><span class="p">,</span> <span class="s1">&#39;scaler_and_sklearn_version.pkl&#39;</span><span class="p">)</span>
-<span class="ne">FileExistsError</span><span class="p">:</span> <span class="n">File</span> <span class="n">new_sklearn_file</span><span class="o">.</span><span class="n">pkl</span> <span class="n">already</span> <span class="n">exists</span><span class="o">.</span>
+<span class="ne">FileExistsError</span><span class="p">:</span> <span class="n">File</span> <span class="n">scaler_and_sklearn_version</span><span class="o">.</span><span class="n">pkl</span> <span class="n">already</span> <span class="n">exists</span><span class="o">.</span>
 
 <span class="c1"># Successfully overwrite an existing file</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">sk_io</span><span class="o">.</span><span class="n">save_pickled_sklearn_object_and_version</span><span class="p">(</span>

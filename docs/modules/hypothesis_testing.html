@@ -56,7 +56,7 @@
 
           
             
-            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+            <img src="../_static/logo.jpg" class="logo" alt="Logo"/>
           
           </a>
 
@@ -93,7 +93,6 @@
 <li class="toctree-l3"><a class="reference internal" href="#testing-for-significance">Testing For Significance</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-overview">Module Overview</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#module-ds_utils.hypothesis_testing.check_experiment_inputs">check_experiment_inputs</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-ds_utils.hypothesis_testing.evaluation">evaluation</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-ds_utils.hypothesis_testing.set_up_experiment">set_up_experiment</a></li>
 </ul>
@@ -362,13 +361,10 @@ sample group.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#module-ds_utils.hypothesis_testing.check_experiment_inputs" title="ds_utils.hypothesis_testing.check_experiment_inputs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ds_utils.hypothesis_testing.check_experiment_inputs</span></code></a></p></td>
-<td><p>Internal checks within the package to ensure that the parameters provided when setting up or evaluating an experiment are valid.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#module-ds_utils.hypothesis_testing.evaluation" title="ds_utils.hypothesis_testing.evaluation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ds_utils.hypothesis_testing.evaluation</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#module-ds_utils.hypothesis_testing.evaluation" title="ds_utils.hypothesis_testing.evaluation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ds_utils.hypothesis_testing.evaluation</span></code></a></p></td>
 <td><p>Analyse the outcome of an experiment and test for significance.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#module-ds_utils.hypothesis_testing.set_up_experiment" title="ds_utils.hypothesis_testing.set_up_experiment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ds_utils.hypothesis_testing.set_up_experiment</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#module-ds_utils.hypothesis_testing.set_up_experiment" title="ds_utils.hypothesis_testing.set_up_experiment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ds_utils.hypothesis_testing.set_up_experiment</span></code></a></p></td>
 <td><p>Helper functions when setting up an experiment.</p></td>
 </tr>
 </tbody>
@@ -376,106 +372,6 @@ sample group.</p>
 </div>
 <div class="section" id="submodules">
 <h3><a class="toc-backref" href="#id6">Submodules</a><a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h3>
-<div class="section" id="module-ds_utils.hypothesis_testing.check_experiment_inputs">
-<span id="check-experiment-inputs"></span><h4>check_experiment_inputs<a class="headerlink" href="#module-ds_utils.hypothesis_testing.check_experiment_inputs" title="Permalink to this headline">¶</a></h4>
-<p>Internal checks within the package to ensure that the parameters provided when setting up or evaluating an experiment are
-valid.</p>
-<dl class="py function">
-<dt id="ds_utils.hypothesis_testing.check_experiment_inputs.check_if_sample_sizes_are_proportions_or_absolute">
-<code class="sig-name descname">check_if_sample_sizes_are_proportions_or_absolute</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sample_groups</span><span class="p">:</span> <span class="n">Dict<span class="p">[</span>str<span class="p">, </span>Union<span class="p">[</span>float<span class="p">, </span>int<span class="p">]</span><span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="../_modules/ds_utils/hypothesis_testing/check_experiment_inputs.html#check_if_sample_sizes_are_proportions_or_absolute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ds_utils.hypothesis_testing.check_experiment_inputs.check_if_sample_sizes_are_proportions_or_absolute" title="Permalink to this definition">¶</a></dt>
-<dd><p>Identifies whether the user has specified the size of each sample group as a proportion of the population, or their
-absolute size in terms of number of records.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>sample_groups</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>float</em><em>] or </em><em>dict</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em>) – Keys: The names of each sample group
-Values: How big they should be.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Whether the sizes reflect ‘proportion’ or their ‘absolute’ size.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>str</p>
-</dd>
-<dt class="field-even">Raises</dt>
-<dd class="field-even"><p><strong>ValueError</strong> – If the values provided for the sizes of each sample group are not all floats (proportions), or all integers
-    (absolute sizes).</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="ds_utils.hypothesis_testing.check_experiment_inputs.validate_binary_events_are_represented_with_0_or_1">
-<code class="sig-name descname">validate_binary_events_are_represented_with_0_or_1</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">experiment_observations</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/ds_utils/hypothesis_testing/check_experiment_inputs.html#validate_binary_events_are_represented_with_0_or_1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ds_utils.hypothesis_testing.check_experiment_inputs.validate_binary_events_are_represented_with_0_or_1" title="Permalink to this definition">¶</a></dt>
-<dd><p>When the experiment is evaluating whether a proportion has changed, the raw observations should be encoded as
-0 (non-event) or 1 (event).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>experiment_observations</strong> (<em>numpy array_like</em>) – Observations for specific group in the experiment.</p>
-</dd>
-<dt class="field-even">Raises</dt>
-<dd class="field-even"><p><strong>ValueError</strong> – If the observations are not all represented by 0’s and 1’s only.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="ds_utils.hypothesis_testing.check_experiment_inputs.validate_experiment_parameter_between_0_and_1">
-<code class="sig-name descname">validate_experiment_parameter_between_0_and_1</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">parameter_value</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">experiment_parameter</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/ds_utils/hypothesis_testing/check_experiment_inputs.html#validate_experiment_parameter_between_0_and_1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ds_utils.hypothesis_testing.check_experiment_inputs.validate_experiment_parameter_between_0_and_1" title="Permalink to this definition">¶</a></dt>
-<dd><p>Raises exception if a parameter for the experiment e.g. power, or significance level is not in the correct range
-0 &lt; parameter_value &lt; 1.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>parameter_value</strong> – Value provided for the parameter e.g. 0.05 to represent a 5% significance level.</p></li>
-<li><p><strong>experiment_parameter</strong> – What type of parameter has been provided e.g. ‘significance_level’ / ‘power’ / ‘sample_size_proportions’.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Raises</dt>
-<dd class="field-even"><p><strong>ValueError</strong> – If 0 &lt; parameter_value &lt; 1 not satisfied.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="ds_utils.hypothesis_testing.check_experiment_inputs.validate_measurement_type_is_valid">
-<code class="sig-name descname">validate_measurement_type_is_valid</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">measurement_type</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/ds_utils/hypothesis_testing/check_experiment_inputs.html#validate_measurement_type_is_valid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ds_utils.hypothesis_testing.check_experiment_inputs.validate_measurement_type_is_valid" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check that the experiment has been correctly specified as measuring proportions or means.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>measurement_type</strong> (<em>str</em>) – What type of metric the experiment is measuring i.e. proportion (e.g. % conversion rate) or mean (e.g. average
-spend).</p>
-</dd>
-<dt class="field-even">Raises</dt>
-<dd class="field-even"><p><strong>ValueError</strong> – If <cite>measurement_type</cite> not in [‘proportion’, ‘mean’].</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="ds_utils.hypothesis_testing.check_experiment_inputs.validate_sample_size_values_are_appropriate">
-<code class="sig-name descname">validate_sample_size_values_are_appropriate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">original_population</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">sample_groups</span><span class="p">:</span> <span class="n">Dict<span class="p">[</span>str<span class="p">, </span>Union<span class="p">[</span>float<span class="p">, </span>int<span class="p">]</span><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">size_type</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/ds_utils/hypothesis_testing/check_experiment_inputs.html#validate_sample_size_values_are_appropriate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ds_utils.hypothesis_testing.check_experiment_inputs.validate_sample_size_values_are_appropriate" title="Permalink to this definition">¶</a></dt>
-<dd><p>When creating experiment groups, check that the values provided for the size of each sample group, be they
-proportions or absolute sizes, are valid.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>original_population</strong> (<em>pd.DataFrame</em>) – The total dataset from which samples will be drawn.</p></li>
-<li><p><strong>sample_groups</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>float</em><em>] or </em><em>dict</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em>) – Keys: The names of each sample group
-Values: How big they should be.</p></li>
-<li><p><strong>size_type</strong> (<em>str 'proportion'</em><em>, </em><em>'absolute'</em>) – Whether the sizes reflect ‘proportion’ or their ‘absolute’ size.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Raises</dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>ValueError</strong> – If the proportions do not adhere to 0 &lt; proportion &lt; 1.</p></li>
-<li><p><strong>ValueError</strong> – If the proportions sum up to more than 1.</p></li>
-<li><p><strong>ValueError</strong> – If the absolute sizes sum up to more than the size of the original population.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-</div>
 <div class="section" id="module-ds_utils.hypothesis_testing.evaluation">
 <span id="evaluation"></span><h4>evaluation<a class="headerlink" href="#module-ds_utils.hypothesis_testing.evaluation" title="Permalink to this headline">¶</a></h4>
 <p>Analyse the outcome of an experiment and test for significance.</p>
@@ -495,7 +391,7 @@ will yield positive or negative results.</p></li>
 <li><p><strong>significance_level</strong> (<em>float in interval</em><em> (</em><em>0</em><em>,</em><em>1</em><em>) </em><em>(</em><em>default is 0.05</em><em>)</em>) – The significance level/probability of a type I error, i.e. likelihood of a false positive (incorrectly rejecting
 the Null Hypothesis when it is in fact true). Default value of 5% is commonly used but you should consider what
 is appropriate given the business context.</p></li>
-<li><p><strong>verbose</strong> (<em>bool</em>) – </p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – Whether to print a message summarising if the results are significant or not.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

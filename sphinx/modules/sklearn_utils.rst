@@ -54,7 +54,7 @@ In order to overwrite an existing file, you must request :py:data:`overwrite` mo
 
    # Attempt to overwrite an existing file
    >>> sk_io.save_pickled_sklearn_object_and_version(scaler, 'scaler_and_sklearn_version.pkl')
-   FileExistsError: File new_sklearn_file.pkl already exists.
+   FileExistsError: File scaler_and_sklearn_version.pkl already exists.
 
    # Successfully overwrite an existing file
    >>> sk_io.save_pickled_sklearn_object_and_version(

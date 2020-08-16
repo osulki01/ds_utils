@@ -54,7 +54,7 @@
 
           
             
-            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+            <img src="../../../_static/logo.jpg" class="logo" alt="Logo"/>
           
           </a>
 
@@ -164,7 +164,7 @@
 <span class="kn">from</span> <span class="nn">statsmodels.stats</span> <span class="kn">import</span> <span class="n">power</span> <span class="k">as</span> <span class="n">stats_power</span>
 
 <span class="c1"># Internal modules</span>
-<span class="kn">from</span> <span class="nn">ds_utils.hypothesis_testing</span> <span class="kn">import</span> <span class="n">check_experiment_inputs</span>
+<span class="kn">from</span> <span class="nn">ds_utils.hypothesis_testing</span> <span class="kn">import</span> <span class="n">_check_experiment_inputs</span>
 
 
 <span class="k">def</span> <span class="nf">_calculate_effect_size_means</span><span class="p">(</span><span class="n">baseline_mean</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">new_mean</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">standard_deviation</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -294,9 +294,9 @@
     <span class="k">if</span> <span class="n">measurement_type</span> <span class="o">==</span> <span class="s1">&#39;mean&#39;</span> <span class="ow">and</span> <span class="n">standard_deviation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;When measuring a mean for your test, you must also specify its existing `standard_deviation`.&quot;</span><span class="p">)</span>
 
-    <span class="n">check_experiment_inputs</span><span class="o">.</span><span class="n">validate_experiment_parameter_between_0_and_1</span><span class="p">(</span><span class="n">significance_level</span><span class="p">,</span> <span class="s1">&#39;significance_level&#39;</span><span class="p">)</span>
-    <span class="n">check_experiment_inputs</span><span class="o">.</span><span class="n">validate_experiment_parameter_between_0_and_1</span><span class="p">(</span><span class="n">power</span><span class="p">,</span> <span class="s1">&#39;power&#39;</span><span class="p">)</span>
-    <span class="n">check_experiment_inputs</span><span class="o">.</span><span class="n">validate_measurement_type_is_valid</span><span class="p">(</span><span class="n">measurement_type</span><span class="p">)</span>
+    <span class="n">_check_experiment_inputs</span><span class="o">.</span><span class="n">validate_experiment_parameter_between_0_and_1</span><span class="p">(</span><span class="n">significance_level</span><span class="p">,</span> <span class="s1">&#39;significance_level&#39;</span><span class="p">)</span>
+    <span class="n">_check_experiment_inputs</span><span class="o">.</span><span class="n">validate_experiment_parameter_between_0_and_1</span><span class="p">(</span><span class="n">power</span><span class="p">,</span> <span class="s1">&#39;power&#39;</span><span class="p">)</span>
+    <span class="n">_check_experiment_inputs</span><span class="o">.</span><span class="n">validate_measurement_type_is_valid</span><span class="p">(</span><span class="n">measurement_type</span><span class="p">)</span>
 
     <span class="c1"># Calculate sample size required if measuring difference between two proportions and will therefore use a z-test</span>
     <span class="k">if</span> <span class="n">measurement_type</span> <span class="o">==</span> <span class="s1">&#39;proportion&#39;</span><span class="p">:</span>
@@ -392,8 +392,8 @@
 
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># Check how user has specified sample sizes</span>
-        <span class="n">sample_size_type</span> <span class="o">=</span> <span class="n">check_experiment_inputs</span><span class="o">.</span><span class="n">check_if_sample_sizes_are_proportions_or_absolute</span><span class="p">(</span><span class="n">sample_groups</span><span class="p">)</span>
-        <span class="n">check_experiment_inputs</span><span class="o">.</span><span class="n">validate_sample_size_values_are_appropriate</span><span class="p">(</span>
+        <span class="n">sample_size_type</span> <span class="o">=</span> <span class="n">_check_experiment_inputs</span><span class="o">.</span><span class="n">check_if_sample_sizes_are_proportions_or_absolute</span><span class="p">(</span><span class="n">sample_groups</span><span class="p">)</span>
+        <span class="n">_check_experiment_inputs</span><span class="o">.</span><span class="n">validate_sample_size_values_are_appropriate</span><span class="p">(</span>
             <span class="n">original_population</span><span class="o">=</span><span class="n">original_population</span><span class="p">,</span>
             <span class="n">sample_groups</span><span class="o">=</span><span class="n">sample_groups</span><span class="p">,</span>
             <span class="n">size_type</span><span class="o">=</span><span class="n">sample_size_type</span>
