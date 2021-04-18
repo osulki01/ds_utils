@@ -1,11 +1,8 @@
 # ds_utils
 
-Utilities library to help with common Data Science tasks.
+![ds_utils logo](./sphinx/logo.jpg)
 
-## Pre-requisites
+ds_utils is a collection of utility functions designed to make data science tasks easier and fill in some small gaps
+that existing libraries do not cover.
 
-tbc
-
-## Installation
-
-tbc
+Documentation can be found [here](https://osulki01.github.io/ds_utils/).

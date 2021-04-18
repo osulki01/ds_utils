@@ -5,7 +5,7 @@
 Welcome to ds_utils's documentation!
 =====================================
 
-ds_utils is a collection of utility functions designed to make data science tasks easier, and fill in some small gaps
+ds_utils is a collection of utility functions designed to make data science tasks easier and fill in some small gaps
 that existing libraries do not cover.
 
 It is not currently an installable package, but the plan is to make it so.
@@ -26,6 +26,15 @@ Use Cases
 Installation
 ============
 
+You will need Python 3 available on your machine, which can be installed `here <https://www.python.org/downloads/>`_.
+
+To create a python environment with the necessary libraries you must then install `pipenv <https://pypi.org/project/pipenv/>`_.
+
+Finally, install the libraries within a self-contained environment with the command:
+
+.. code-block:: console
+
+   >>> pipenv sync
 
 Modules
 =======
